@@ -25,17 +25,17 @@ Kernels (validated conventions; see code/common/bdg.py + test_bdg_kmh.py):
     delta_b= sum_i t_i Delta_f_i g_i(k) N^x Gamma_i
     D = (U - 2 lam)/2,  D0 = (U - 2 mu_L)/2   (write-up Eqs. 5.16-5.18).
 
-Constant energy (per cell, 4 sites): bond-counted decoupling constant
-(KMH-validated rule E_c_hop = 2 t_bond (bonds/cell) (chi_b chi_f + D_b D_f);
-all four channels give 4 sites/cell x n_i bonds /2 x 2 t_i/n_i = 4 t_i):
+Constant energy (per cell, 4 sites): bond-counted decoupling constants
+(rule: E_c_hop = sum_bonds 2 t_bond <chi_f><chi_b>; per channel this gives
+C_i = 2 * sum_{bonds/cell} (Bloch weight) -> C_VEC = (4, 4, 8, 4, 4), i.e.
+the write-up's uniform 2 z_i = 8 is wrong for three of four channels):
     E_c = sum_i C_i t_i (chi_b_i chi_f_i + Delta_b_i Delta_f_i)
         + 4 (lam + x mu_L)
         + (U - lam - mu_L) sum_a d_a^2 + (mu_L - lam) sum_a h_a^2
-        + condensate-bilinear terms from the k=0 part of H_b (computed
-          directly by sandwiching the k=0 boson kernel with the condensate
-          vector - no hand-derived formula needed).
-The factor C_i = 4 (bond-counted) vs the write-up's 8: settled by the
-Hellmann-Feynman check in checks() (docc two ways) - run check_ec_factor().
+        + condensate-bilinear terms (cond_energy below).
+C_VEC is validated numerically by the real-space bond-expectation referee in
+test_realspace.py (channels 0-3) and by the staggered/uniform gauge-
+equivalence degeneracy test (channel 4); see summary.md section 2.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "common"))
@@ -61,11 +61,12 @@ def kron(*ms):
 
 
 # Gamma_i in (mu x tau) space, 4x4.
-# Channels 0-3: the uniform (Class I) decoupling of the four hoppings.
-# Channel 4: the CLASS II (PSG-twisted) z-channel - same z-bonds, but the
+# Channels 0-3: the uniform decoupling of the four hoppings.
+# Channel 4: the PSG-twisted (pi-flux) z-channel - same z-bonds, but the
 # bond mean fields carry a tau-staggered sign: M = mu^x tau^z, form factor
-# g_z. Physically symmetric up to the Z2 gauge transformation G = tau^z
-# (the screw flips the stagger; G restores it). Crucially {mu^x tau^z,
+# g_z. Verified gauge structure (verify_sg135.py): screw/I/C2z/T act plainly;
+# C2x and both glides are restored by the Z2 gauge G = mu^z (sign per
+# z-layer), identically in both matter sectors. Crucially {mu^x tau^z,
 # tau^x} = 0, so its pairing adds IN QUADRATURE with the xy channel: the
 # two nodal planes gap each other with no interference.
 GAMMAS = (kron(I2, X), kron(X, I2), kron(Z, I2), kron(Y, Y), kron(X, Z))
