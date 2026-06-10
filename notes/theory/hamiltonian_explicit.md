@@ -240,3 +240,24 @@ isolation, hopping and pairing blocks, both matter sectors, 12 random k):
 every entry EXACTLY zero. T^2 representations verified: (i sigma^y K)^2 = -1
 (spinon Kramers), K^2 = +1 (chargon). The converged state's amplitudes are
 all relatively real, so the full mean field is T-invariant term by term.
+
+### 6.1 T-covariance of the decomposition itself
+
+The parton T-actions are not free postulates; they must reproduce the
+electron transformation through c+_sigma = f+_sigma h + sigma d+ f_{-sigma}.
+With T f_up = f_dn, T f_dn = -f_up (Kramers, T^2 = -1) and T h = h,
+T d = d (scalars, T^2 = +1; forced, since d+ creates the on-site singlet
+|updn>, which is T-even):
+
+  T c+_up T^-1 = f+_dn h - d+ f_up  = c+_dn      (the sigma = dn sign emerges)
+  T c+_dn T^-1 = -f+_up h - d+ f_dn = -c+_up
+
+The sigma factor in the doublon term is exactly (i sigma^y f)_sigma - the
+T-covariant singlet combination. Machine-checked on the local 4-state
+Hilbert space {|0>, |up>, |dn>, |updn>}: decomposition identity, electron-
+and parton-level T action, covariance through the decomposition, and
+T^2 = (+1, -1, -1, +1) on (|0>, |up>, |dn>, |updn>) - all exact. The derived
+bond operators chi^f (spin trace), Delta^f (singlet), chi^b, Delta^b (real
+boson bilinears), U d+d, and both constraint terms are then individually
+T-even, which is what reduces mean-field T-invariance to reality of the
+expectation values (section 6).
