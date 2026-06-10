@@ -86,8 +86,12 @@ def solve_uncondensed(U, seeds):
         except Exception:
             continue
         if np.linalg.norm(sol.fun) < 1e-5:
+            if np.abs(sol.x[:16]).max() < 0.02:
+                continue  # trivial/atomic root (flat-direction kink artifact)
             E = float(e_total(jnp.asarray(sol.x), ZERO_C8, U, kx, ky, kz))
             wmin = float(min_boson_eig(jnp.asarray(sol.x), U, kx, ky, kz))
+            if wmin < -1e-6:
+                continue  # boson sector unstable: not a physical solution
             out.append({"p": sol.x, "E": E, "wmin": wmin,
                         "rnorm": float(np.linalg.norm(sol.fun))})
     out.sort(key=lambda s: s["E"])
@@ -121,6 +125,8 @@ def solve_condensed(U, seeds):
             continue
         if np.linalg.norm(sol.fun) < 1e-5:
             p, c8 = sol.x[:18], sol.x[18:]
+            if np.abs(p[:16]).max() < 0.02 and np.abs(c8).max() < 0.02:
+                continue  # trivial root
             E = float(e_total(jnp.asarray(p), jnp.asarray(c8), U, kx, ky, kz))
             wmin = float(min_boson_eig(jnp.asarray(p), U, kx, ky, kz))
             out.append({"p": sol.x, "E": E, "wmin": wmin,
