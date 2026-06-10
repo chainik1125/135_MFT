@@ -286,3 +286,68 @@ coexists with the trivial site-rep assignment.
 Induced band representations: boson A_g -> G (4 bands, 4-fold connected at
 A); spinon E-bar_g -> G (8 bands, irreducibly 8-fold at A - the connectivity
 that forces spinon pairing rather than a spinon band insulator at nu_f = 4).
+
+---
+
+## 8. Linear vs projective splitting of the electron's symmetry
+##    (why the trivial boson rep does not make the state trivial)
+
+The project's founding question was whether the electron representation can
+be split as rho_e = rho_b (x) rho_f with a NONTRIVIAL bosonic part - the
+intuition being that an "interesting" parton state should divide the
+electron's symmetry quantum numbers between its constituents. Two layers of
+that statement must be distinguished.
+
+**Layer 1 - linear reps, and their gauge ambiguity.** All three partons
+carry the emergent gauge charge, so every symmetry g can be dressed with a
+gauge rotation, relabeling (rho_b, rho_f) -> (lambda(g) rho_b,
+lambda(g) rho_f) at fixed rho_e and fixed physical state. "The boson is in a
+nontrivial 1D rep" is therefore largely a gauge choice. The gauge-invariant
+residue in SG135 is a single bit: lambda(C2z) = lambda(screw)^2 = +1 for
+every Z2 character, so chi_b(C2z) = +-1 cannot be relabeled. That bit is the
+invariant version of "nontrivial boson rep" (Class II when -1). The realized
+ground state has chi_b(C2z) = +1: at the linear level its boson is genuinely
+trivial, and the Class II sector remains open.
+
+**Layer 2 - projective reps (symmetry fractionalization).** Ask what
+operator implements a space-group element on a SINGLE spinon. A linear
+answer satisfies U(g1)U(g2) = U(g1 g2). The realized state instead gives a
+projective answer: U(g1)U(g2) = omega(g1,g2) U(g1 g2) with non-removable
+signs omega = +-1 - the parton represents a Z2 EXTENSION of the space group,
+i.e. it carries no linear rep at all. This is consistent because physical
+operators are parton bilinears (omega^2 = 1), and the electron - a
+boson-fermion bound state - requires exactly
+
+    omega_b . omega_f = trivial :
+
+the electron's linear symmetry class factorizes into two CANCELING
+NONTRIVIAL projective classes. This is the precise sense in which the
+electron's symmetry is split between the partons (Wen's PSG; the
+Essin-Hermele fractionalization classes). In the realized pi-flux state both
+partons carry the same nontrivial class: screw/I/C2z/T linear; C2x and both
+glides dressed by the gauge sign (-1)^{2z}; gauge-invariant fingerprint: a
+single spinon transported around a mixed z-xy plaquette acquires -1 where an
+electron acquires +1. No electron band structure can reproduce that.
+
+**The hierarchy:**
+
+| level | invariant | realized state | meaning |
+|---|---|---|---|
+| linear | chi_b(C2z) (screw^2-protected) | +1 (Class I) | boson carries a distinct sharp linear quantum number; unrealized (= the Class II ansatz) |
+| projective | PSG class / pi fluxes | NONTRIVIAL | partons carry canceling non-linear symmetry classes (symmetry fractionalization) |
+
+The two layers have distinct physical discriminators. Linear (Class I vs
+II): the chargon-condensation transition out of the topological phase - a
+Class I chargon condenses symmetrically (the SC found below U* is exactly
+this), a Class II chargon cannot (forced 2D Gamma-multiplets => nematic
+transition). Projective: the symmetry quantum numbers of the deconfined
+excitations themselves (spinon/vison Wilson loops = -1, gauge-dressed glide
+action).
+
+Summary: the energetics declined the linear splitting but spontaneously
+selected a state whose symmetry data splits at the projective level - which
+is the more general (and arguably more fundamental) sense of fractionalizing
+the electron's symmetry, and is what made the full gap, and hence the
+topological state, possible. The strongest version of the original
+criterion - a boson with the protected linear -1 - is the screw-twisted
+Class II ansatz, the natural next target.
