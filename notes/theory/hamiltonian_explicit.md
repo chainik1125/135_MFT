@@ -261,3 +261,28 @@ bond operators chi^f (spin trace), Delta^f (singlet), chi^b, Delta^b (real
 boson bilinears), U d+d, and both constraint terms are then individually
 T-even, which is what reduces mean-field T-invariance to reality of the
 expectation values (section 6).
+
+---
+
+## 7. Which representations the partons carry (realized state)
+
+Site level (Wyckoff 4a, site group 2/m, every site an inversion center):
+
+- boson (h and d): the TRIVIAL rep A_g (single-valued, T^2 = +1);
+  chi_b(C2z) = +1 - the gauge-protected Class I invariant.
+- spinon f: E-bar_g, the electron's own Kramers corep (double-valued, even
+  parity, T^2 = -1).
+
+So the linear factorization is the "expected/uninteresting" one (trivial
+boson x electron corep); all other linear options are Z2-gauge relabelings
+of it except the unrealized Class II (chi_b(C2z) = -1). The nontriviality of
+the realized state lives one level up, in the PROJECTIVE (PSG) realization
+of the space group, identical in both parton sectors: screw 4_2, I, C2z, T
+linear; C2x and both glides realized up to the Z2 gauge G = (-1)^{2z}
+(mu_z); invariant content = pi flux through mixed z-xy plaquettes. This
+projective class restricts trivially to the site group, which is why it
+coexists with the trivial site-rep assignment.
+
+Induced band representations: boson A_g -> G (4 bands, 4-fold connected at
+A); spinon E-bar_g -> G (8 bands, irreducibly 8-fold at A - the connectivity
+that forces spinon pairing rather than a spinon band insulator at nu_f = 4).
