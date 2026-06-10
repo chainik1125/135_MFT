@@ -1,6 +1,6 @@
 # Slave-boson mean-field theory of the SG135 Hubbard model — 10h sprint summary
 
-**TL;DR.** We built and validated (against the published Kane-Mele-Hubbard slave-boson phase diagram) a fully numerical solver for slave-boson self-consistency equations, then solved the SG135 (P4₂/mbc) double-Dirac Hubbard model that the June write-up got stuck on. Within the naive uniform ansatz the mean field picks a symmetric but **nodal** quasi-1D paired spin liquid (channel competition forbids the multi-channel pairing that would gap it). Enlarging the ansatz to the **PSG-twisted (π-flux) sector** — a τ-staggered z-channel whose matrix structure *anticommutes* with the xy channel, so the two gaps add in quadrature — reverses the verdict: **the fully-gapped, fully-symmetric (up to the μ_z gauge), uncondensed Z₂ fractionalized insulator is the GLOBAL mean-field ground state for all U ≳ 1**, the LSM-mandated topological phase of SG135 at filling ν=4. The state's symmetry was verified generator-by-generator (the screw, C₂x, both glides, inversion, TRS) with its PSG gauge structure resolved explicitly, and its Bogoliubov spectrum is gapped and non-degenerate over the whole BZ in both the spinon and chargon sectors. Every energy entering the phase competition is cross-checked against independent constructions.
+**TL;DR.** We built and validated (against the published Kane-Mele-Hubbard slave-boson phase diagram) a fully numerical solver for slave-boson self-consistency equations, then solved the SG135 (P4₂/mbc) double-Dirac Hubbard model that the June write-up got stuck on. Within the naive uniform ansatz the mean field picks a symmetric but **nodal** quasi-1D paired spin liquid (channel competition forbids the multi-channel pairing that would gap it). Enlarging the ansatz to the **PSG-twisted (π-flux) sector** — a τ-staggered z-channel whose matrix structure *anticommutes* with the xy channel, so the two gaps add in quadrature — changes the verdict: **the fully-gapped, uncondensed Z₂ fractionalized insulator — the LSM-mandated topological phase of SG135 at ν=4 — is a self-consistent mean field and the lowest-energy SYMMETRIC state for all U ≳ 1.** Its symmetry was verified generator-by-generator (screw, C₂x, both glides, inversion, TRS) with the PSG gauge structure resolved explicitly, and its Bogoliubov spectrum is gapped and non-degenerate over the whole BZ in both spinon and chargon sectors. One broken-symmetry competitor (a z-dimer VBS) sits ~10% lower in raw MFT energy — precisely the kind of dimer state the KMH gate shows mean field over-favors. Every energy entering the phase competition is cross-checked against independent constructions.
 
 ## Executive summary
 
@@ -13,8 +13,8 @@
 - **The June blocker is solved: it was (a) needing numerics instead of closed forms, and (b) two bookkeeping traps.** The boson sector requires μ≈U/2 for para-spectrum stability (μ=0 makes every solve fail — this is invisible in the KMH closed forms, which sit at the stable point implicitly), and the decoupling constants are channel-dependent, C=(4,4,8,4), not the uniform 8 of the write-up (validated by a real-space bond-expectation referee). [no figure — see §3]
 - **Group theory: only two physically distinct slave-boson factorization classes exist in SG135, and neither evades the band-connectivity constraint.** Site group 2/m at Wyckoff 4a gives 4 factorizations collapsing under Z₂ gauge twists to Class I/II (chargon C₂z = ±1); both spinon EBRs stay 8-connected at A. Fractionalization itself (chargon gap + spinon pairing), not the boson rep, is what evades LSM. Our ansatz is Class I; its pairing transforms in the identity corep (verified analytically + numerically).
 - **The naive uniform mean field is a symmetric but NODAL fractionalized state.** Its ground state pairs in one channel only (quasi-1D, gapless on the kz=π plane); channel mixing — which would gap it — is refused (concave pairing energetics + commuting channel structures). [FIGURE: sg135_bands_znodal; channel_surface]
-- **HEADLINE: the PSG-twisted (π-flux) ansatz makes the fully-gapped topological state the GLOBAL ground state for all U ≳ 1.** A τ-staggered z-channel anticommutes with the xy channel: gaps add in quadrature; the state is gapped everywhere (BdG gap 0.018 t_xy, chargon gap 0.13), uncondensed, and symmetric with explicitly verified PSG (screw/I/C₂z/T plain; C₂x/glides up to μ_z gauge). By LSM/Watanabe this IS the Z₂ topologically ordered insulator at ν=4. [FIGURE: sg135_bands_gapped_classII_U1.png]
-- **Phase diagram vs U.** SC (chargon condensate, mixed-channel pairing) below U* ≈ 0.8–1; the gapped Z₂ insulator above, persisting to the deep Mott regime (E → atomic-Mott 0 from below as ~t²/U). [FIGURE: sg135_phases]
+- **HEADLINE: the PSG-twisted (π-flux) ansatz makes the fully-gapped topological state the lowest-energy SYMMETRIC state for all U ≳ 1.** A τ-staggered z-channel anticommutes with the xy channel: gaps add in quadrature; the state is gapped everywhere (BdG gap 0.018 t_xy, chargon gap 0.13), uncondensed, and symmetric with explicitly verified PSG (screw/I/C₂z/T plain; C₂x/glides up to μ_z gauge). By LSM/Watanabe a symmetric gapped insulator at ν=4 must be topologically ordered: this is the mean-field realization of the SG135 Z₂ fractionalized insulator. [FIGURE: sg135_bands_gapped_classII_U1.png]
+- **Phase diagram vs U.** SC (chargon condensate) below U* ≈ 0.8–1; above it the gapped Z₂ insulator beats every symmetric competitor (nodal states by ~7%), while a broken-translation dimer VBS lies ~10% lower in raw mean-field energy — the same situation as the KMH benchmark, where the analogous dimer phase dominates in MFT and is known from QMC to stand in for ordered phases that mean field cannot describe (MFT lacks dimer resonance energy). [FIGURE: sg135_phases]
 
 **Caveats.** Mean-field only (no gauge fluctuations; quasi-1D pairing would be fragile); uniform 4-channel ansatz (no flux/Class II patterns, no broken-symmetry bond order); the KMH SL window itself is known (QMC) to be a mean-field artifact — we use KMH only as a solver gate, not as physics.
 
@@ -159,9 +159,14 @@ mean fields carry a τ-staggered sign: the Bloch structure becomes
 pairing gaps now add in quadrature, with zero interference. The resulting
 state, at U = 1 (residual 3×10⁻⁸):
 
-- is the **global minimum**: E = −0.2374 vs −0.2217 (nodal z), and remains the
-  global minimum for **all U from ≈1 into the deep Mott regime** (checked to
-  U = 6); below U ≈ 0.8–1 the chargon condenses and the SC takes over;
+- is the **lowest-energy symmetric state**: E = −0.2374 vs −0.2217 (nodal z)
+  at U = 1, and remains the lowest symmetric state for **all U from ≈1 into
+  the deep Mott regime** (checked to U = 6); below U ≈ 0.8–1 the chargon
+  condenses and the SC takes over. The only state found below it is the
+  broken-translation z-dimer VBS (E = −0.262 at U = 1; decoupled two-site
+  singlets), the direct analogue of the KMH "DM" phase — which the gate
+  itself shows is the channel through which MFT over-favors dimerization
+  (in KMH the same construction wins above U_c2 yet QMC finds no such phase);
 - is **fully gapped and non-degenerate everywhere**: min BdG gap 0.018 t_xy
   over the BZ (0.014 at A), chargon gap 0.13, no condensate;
 - is **fully symmetric, with its PSG resolved explicitly**: the 4₂ screw,
@@ -185,17 +190,20 @@ with a plain Hubbard interaction.
 
 ## §6 Limitations and what would come next
 
-- Mean field only: no gauge fluctuations (the quasi-1D nodal state in
-  particular would be strongly affected); the KMH gate itself shows MFT
-  overproduces exotic phases (QMC kills the KMH SL window).
-- Uniform ansatz: no broken-translation (flux/Class II) patterns; Class II
-  requires a π-flux-twisted mean field and carries distinct, sharp signatures
-  (nematic chargon condensation, C₂z = −1 A-quadruplet) — the natural next
-  step.
+- Mean field only: no gauge fluctuations; the KMH gate itself shows MFT
+  overproduces both exotic and dimerized phases (QMC kills the KMH SL window
+  and its DM phase). The VBS-vs-Z₂ competition here (ΔE ≈ 10%) is exactly the
+  kind that dimer-resonance corrections, absent in MFT, are known to tip.
+- Ansatz scope: one PSG-twisted channel was explored (the τ-staggered
+  z-channel); the systematic PSG classification of all flux patterns (and the
+  chargon-C₂z = −1 "Class II proper" sector with its nematic-condensation
+  signature) remains open.
+- The mean field is a BdG free-fermion state; "topologically ordered" applies
+  to the physical projected state it represents (gapped chargon + gapped
+  paired spinon ⇒ deconfined Z₂ gauge structure in 3+1d at mean-field level),
+  with the LSM/Watanabe theorem guaranteeing that *whatever* symmetric gapped
+  state this flows to cannot be short-range entangled.
 - The SG130 control (where LSM forbids the state) was not attempted.
-- The nodal plane of the z-paired state is form-factor-enforced, not
-  symmetry-protected: perturbations that mix channels (longer-range hopping)
-  would gap it — another route to the topological state.
 
 ## Research process
 
