@@ -76,6 +76,13 @@ could not solve.
    spin factor — using the fermion reps there produces a spurious 10⁻⁸
    artifact we chased down). Gauge-invariant loops mixing z- and xy-bonds
    enclose π flux: a genuine π-flux Z₂ ansatz.
+   **Topological degeneracy** (parton-level diagnostic,
+   `results/gsd_flux_sectors.txt`): threading Z₂ fluxes through the three
+   torus cycles gives 2³ = 8 sectors whose energy splittings collapse as
+   L^q e^(−aL) (3.7×10⁻⁶ t per cell by L = 20 at U = 0.85, ratio per step
+   converging to a constant ≈ 0.5), every sector individually gapped — the
+   GSD = 8 expected of 3+1d Z₂ topological order. The nodal control state
+   shows slow power-law (~L⁻³) splittings instead.
 6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`;
    "classII" in file names is historical — see §4 for the correct PSG label):
    the π-flux state beats every symmetric competitor found at every
