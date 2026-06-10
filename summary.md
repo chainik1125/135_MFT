@@ -216,7 +216,7 @@ above). The τ-staggered z-channel changes the algebra, not the bonds: μˣτᶻ
 anticommutes with τˣ, the cross terms vanish identically, and mixing becomes
 free of interference cost. The resulting π-flux state gaps both nodal
 planes, leaves the residual lines gapped by λ, and wins by 7–8% over every
-symmetric alternative at every U ≥ 1 we checked.
+symmetric alternative at every U ≥ 0.85 we checked.
 
 Below U* the chargon condenses and a superconducting solution with *uniform*
 mixed-channel pairing takes over (the staggered channel stays zero once the
