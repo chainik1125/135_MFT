@@ -215,3 +215,28 @@ k-space the stagger turns the z-channel matrix mu^x into mu^x tau^z, which
 anticommutes with the xy channel's tau^x, so the two pairing gaps add in
 quadrature with zero interference - the mechanism that gaps both nodal
 planes.
+
+---
+
+## 6. Time-reversal, term by term
+
+T = i sigma^y K on electrons/spinons (T^2 = -1); T = K on the spinless
+bosons (T^2 = +1). Conditions: a one-body term g(k) Gamma (x) sigma^0 is
+T-invariant iff g is real and EVEN and Gamma is REAL; a singlet pairing
+block D(k) requires D(-k)^dag = D(k), i.e. additionally Gamma SYMMETRIC and
+the amplitude real (a relative complex phase between channels breaks T).
+
+| term | g even? | Gamma real? | Gamma symmetric? | T-inv |
+|---|---|---|---|---|
+| t_xy: c_x c_y tau^x | yes | yes | yes | yes |
+| t_z: c_z mu^x | yes | yes | yes | yes |
+| t1': (cos kx - cos ky) mu^z | yes | yes | yes | yes |
+| t2': s_x s_y c_z mu^y tau^y | (-)(-)( +) = even | (-mu^y)(-tau^y) = real | yes (antisym x antisym) | yes |
+| z-staggered: c_z mu^x tau^z | yes | yes | yes | yes (PLAIN T, no gauge) |
+| U n_up n_dn | - | T swaps up/dn | - | yes |
+
+Numerical per-term check (code in conversation record; each channel in
+isolation, hopping and pairing blocks, both matter sectors, 12 random k):
+every entry EXACTLY zero. T^2 representations verified: (i sigma^y K)^2 = -1
+(spinon Kramers), K^2 = +1 (chargon). The converged state's amplitudes are
+all relatively real, so the full mean field is T-invariant term by term.
