@@ -197,6 +197,11 @@ characters and too few square-constraints — every linear 2D factorization
 gauge-trivializes, making the SG135 protection a genuinely nonsymmorphic-3D
 phenomenon. The realized π-flux state has plain screw/C₂z action (it is not
 the site-level "Class II"); its nontrivial PSG lives in the glide/C₂x sector.
+The conceptual relation between the two ways the electron's symmetry can
+split between partons — a nontrivial *linear* boson rep (the protected
+Class II bit, unrealized) vs canceling nontrivial *projective* classes
+(symmetry fractionalization, which the realized state has) — is spelled out
+in `notes/theory/hamiltonian_explicit.md` §8.
 
 **The SG130 control** (`notes/theory/sg130_control.md`; bounds verified from
 the WPVZ PDFs: SG130 → ν ∈ 8ℤ, SG135 → ν ∈ 4ℤ): the mirrored construction
