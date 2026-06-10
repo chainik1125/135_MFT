@@ -63,7 +63,11 @@ def kron(*ms):
 # Gamma_i in (mu x tau) space, 4x4
 GAMMAS = (kron(I2, X), kron(X, I2), kron(Z, I2), kron(Y, Y))
 TS_DEFAULT = (1.0, 0.5, 0.3, 0.3)  # t_xy, t_z, t1, t2 (write-up Fig. 15 values)
-C_EC = 4.0  # bond-counted decoupling constant (vs 8.0 in write-up Eq. 5.53)
+# Decoupling constants per channel: C_i = 2 * sum_{bonds/cell} (Bloch weight)
+#   xy: 8 bonds x 1/4; z: 4 x 1/2; ch1: 8 x 1/2; ch2: 16 x 1/8
+# VALIDATED numerically in test_realspace.py (real-space bond expectations);
+# the write-up's uniform 2 z_i = 8 (Eq. 5.53) is incorrect for xy/z/ch2.
+C_VEC = (4.0, 4.0, 8.0, 4.0)
 
 
 def gfuncs(kx, ky, kz):
@@ -85,10 +89,16 @@ def make_kgrid(nk=24):
 #  0-3  chi_b_i   4-7  chi_f_i   8-11 Delta_b_i   12-15 Delta_f_i
 #  16 lam  17 mu_L
 # condensates handled separately (cond vector c8: h on 4 sublattices, d on 4)
+# tiny deterministic diagonal splitting: lifts exact degeneracies so that the
+# forward-mode eigh JVP (1/(li-lj) eigenvector tangents) stays finite. Energy
+# error O(1e-7), far below solver tolerances.
+_BREAK8 = jnp.diag(jnp.linspace(0.0, 1.0, 8)) * 1e-7
+
+
 def fermion_blocks(p, kx, ky, kz, ts):
     gs = gfuncs(kx, ky, kz)
     nk = kx.shape[0]
-    xi = -p[16] * jnp.eye(8, dtype=jnp.complex128)[None, :, :].repeat(nk, axis=0)
+    xi = (-p[16] * jnp.eye(8, dtype=jnp.complex128) + _BREAK8)[None, :, :].repeat(nk, axis=0)
     # xi: spin-block(S) x (mu tau): S^0 (x) sum_i chi_i G_i  -> 8x8
     delta = jnp.zeros((nk, 8, 8), dtype=jnp.complex128)
     for i in range(4):
@@ -104,8 +114,8 @@ def boson_blocks(p, U, kx, ky, kz, ts):
     nk = kx.shape[0]
     D = (U - 2 * p[16]) / 2.0
     D0 = (U - 2 * p[17]) / 2.0
-    xi = D * jnp.eye(8, dtype=jnp.complex128)[None].repeat(nk, axis=0) \
-        + D0 * kron(Z, jnp.eye(4, dtype=jnp.complex128))[None].repeat(nk, axis=0)
+    xi = (D * jnp.eye(8, dtype=jnp.complex128)
+          + D0 * kron(Z, jnp.eye(4, dtype=jnp.complex128)) + _BREAK8)[None].repeat(nk, axis=0)
     delta = jnp.zeros((nk, 8, 8), dtype=jnp.complex128)
     for i in range(4):
         xi = xi + (ts[i] * p[4 + i]) * gs[i][:, None, None] * kron(Z, GAMMAS[i])
@@ -140,7 +150,7 @@ def e_total(p, c8, U, kx, ky, kz, ts=TS_DEFAULT, x=0.0):
     e0b = jnp.mean(e0b_k)
     ec = 4.0 * (p[16] + x * p[17])
     for i in range(4):
-        ec = ec + C_EC * ts[i] * (p[0 + i] * p[4 + i] + p[8 + i] * p[12 + i])
+        ec = ec + C_VEC[i] * ts[i] * (p[0 + i] * p[4 + i] + p[8 + i] * p[12 + i])
     ec = ec + cond_energy(p, c8, U, ts, x)
     return e0f + e0b + ec
 

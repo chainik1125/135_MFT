@@ -45,12 +45,16 @@ def boson_e0(xi, delta, eps=1e-10):
     H = jnp.concatenate([top, bot], axis=-2)
     n2 = H.shape[-1]
     n = n2 // 2
-    wmin = jnp.linalg.eigvalsh(H)[..., 0]
-    Hs = H + (jnp.abs(jnp.minimum(wmin, 0.0))[..., None, None] + eps) * jnp.eye(n2)
+    # deterministic diagonal splitting: keeps the eigh JVP finite at exact
+    # degeneracies (1e-7, far below physical scales and solver tolerances)
+    brk = jnp.diag(jnp.linspace(0.0, 1.0, n2)) * 1e-7
+    wmin = jnp.linalg.eigvalsh(H + brk)[..., 0]
+    shift = jax.lax.stop_gradient(jnp.abs(jnp.minimum(wmin, 0.0)))  # only active when unstable
+    Hs = H + (shift[..., None, None] + eps) * jnp.eye(n2)
     K = jnp.linalg.cholesky(Hs)            # Hs = K K^dag (lower)
     sz = jnp.concatenate([jnp.ones(n), -jnp.ones(n)])
     M = jnp.swapaxes(jnp.conj(K), -1, -2) * sz  # K^dag Sigma_z  (right-multiply diag)
-    W = M @ K                                # K^dag Sigma_z K, Hermitian
+    W = M @ K + brk                          # K^dag Sigma_z K, Hermitian
     ev = jnp.linalg.eigvalsh(W)              # pairs -+eps_n
     pos = jnp.sum(jnp.where(ev > 0, ev, 0.0), axis=-1)
     return 0.5 * pos - 0.5 * jnp.real(jnp.trace(xi, axis1=-2, axis2=-1)), wmin

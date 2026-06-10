@@ -108,10 +108,22 @@ def domain_penalty(p, U, lso, k1, k2, t=1.0):
 domain_penalty = jax.jit(domain_penalty)
 
 
+def _resid_jax(p, U, lso, k1, k2, x=0.0, w_pen=10.0):
+    r = jax.grad(e_total, argnums=0)(p, U, lso, k1, k2, x)
+    pen = w_pen * domain_penalty(p, U, lso, k1, k2)
+    return jnp.concatenate([r, pen])
+
+
+_resid_jit = jax.jit(_resid_jax)
+_resid_jac = jax.jit(jax.jacfwd(_resid_jax, argnums=0))
+
+
 def residuals(p, U, lso, k1, k2, x=0.0, w_pen=10.0):
-    r = grad_e(jnp.asarray(p), U, lso, k1, k2, x)
-    pen = w_pen * domain_penalty(jnp.asarray(p), U, lso, k1, k2)
-    return np.concatenate([np.asarray(r), np.asarray(pen)])
+    return np.asarray(_resid_jit(jnp.asarray(p), U, lso, k1, k2, x, w_pen))
+
+
+def residuals_jac(p, U, lso, k1, k2, x=0.0, w_pen=10.0):
+    return np.asarray(_resid_jac(jnp.asarray(p), U, lso, k1, k2, x, w_pen))
 
 
 SEEDS = {
@@ -132,7 +144,7 @@ def solve_point(U, lso, k1, k2, seeds=None, extra_seeds=(), rtol=1e-6):
         if lso == 0.0:
             s0[4:8] = 0.0
         try:
-            sol = least_squares(residuals, s0, args=(U, lso, k1, k2),
+            sol = least_squares(residuals, s0, jac=residuals_jac, args=(U, lso, k1, k2),
                                 method="trf", xtol=1e-14, ftol=1e-14, gtol=1e-14,
                                 max_nfev=400)
         except Exception:
@@ -156,6 +168,17 @@ def _sc_embed(v, U, sgn=1.0):
                       h, -h, sgn * d, -sgn * d, lam, U / 2.0])
 
 
+def _sc_resid_jax(v, U, lso, k1, k2, sgn, w_primed):
+    p = _sc_embed(v, U, sgn)
+    r = jax.grad(e_total, argnums=0)(p, U, lso, k1, k2, 0.0)
+    pen = 10.0 * domain_penalty(p, U, lso, k1, k2)
+    return jnp.concatenate([r, pen, w_primed * v[jnp.array([2, 3])]])
+
+
+_sc_resid_jit = jax.jit(_sc_resid_jax)
+_sc_resid_jac = jax.jit(jax.jacfwd(_sc_resid_jax, argnums=0))
+
+
 def solve_sc(U, lso, k1, k2, rtol=1e-6):
     """SC solutions: solve the FULL stationarity residuals over the reduced
     condensed manifold. lam seed sits at the k=0 BEC condition."""
@@ -164,18 +187,16 @@ def solve_sc(U, lso, k1, k2, rtol=1e-6):
         for sgn in (1.0, -1.0):
             lam0 = U / 2.0 - 3.0 * Df0  # gap-closing seed (t=1)
             v0 = np.array([0.5, Df0, 0.05 * (lso > 0), 0.05 * (lso > 0), 0.45, 0.45, lam0])
+            wp = 5.0 if lso == 0.0 else 0.0
 
             def res(v):
-                p = _sc_embed(jnp.asarray(v), U, sgn)
-                r = grad_e(p, U, lso, k1, k2, 0.0)
-                pen = 10.0 * domain_penalty(p, U, lso, k1, k2)
-                r = np.concatenate([np.asarray(r), np.asarray(pen)])
-                if lso == 0.0:
-                    r = np.concatenate([r, 5.0 * np.asarray(v[[2, 3]])])
-                return r
+                return np.asarray(_sc_resid_jit(jnp.asarray(v), U, lso, k1, k2, sgn, wp))
+
+            def jac(v):
+                return np.asarray(_sc_resid_jac(jnp.asarray(v), U, lso, k1, k2, sgn, wp))
 
             try:
-                sol = least_squares(res, v0, method="trf", xtol=1e-14, ftol=1e-14,
+                sol = least_squares(res, v0, jac=jac, method="trf", xtol=1e-14, ftol=1e-14,
                                     gtol=1e-14, max_nfev=500)
             except Exception:
                 continue

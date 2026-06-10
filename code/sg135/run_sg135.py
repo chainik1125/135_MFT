@@ -54,23 +54,33 @@ def atomic_check(U=2.0):
 
 
 # ---------------- Stage B: uncondensed solve ----------------
-grad_p = jax.jit(jax.grad(e_total, argnums=0))
+def _resid_jax(p, U):
+    r = jax.grad(e_total, argnums=0)(p, ZERO_C8, U, kx, ky, kz)
+    wmin = min_boson_eig(p, U, kx, ky, kz)
+    pen = 50.0 * jnp.clip(-wmin, 0.0)
+    # mu_L is a flat direction without condensates at x=0; pin via tiny tether
+    return jnp.concatenate([r, jnp.array([pen]), 1e-3 * p[jnp.array([17])]])
+
+
+_resid_jit = jax.jit(_resid_jax)
+_resid_jac = jax.jit(jax.jacfwd(_resid_jax, argnums=0))
 
 
 def residuals(p, U):
-    r = np.asarray(grad_p(jnp.asarray(p), ZERO_C8, U, kx, ky, kz))
-    wmin = float(min_boson_eig(jnp.asarray(p), U, kx, ky, kz))
-    pen = 50.0 * max(0.0, -wmin)
-    # mu_L is a flat direction without condensates at x=0; pin gradient via tiny tether
-    return np.concatenate([r, [pen, 1e-3 * p[17]]])
+    return np.asarray(_resid_jit(jnp.asarray(p), U))
+
+
+def residuals_jac(p, U):
+    return np.asarray(_resid_jac(jnp.asarray(p), U))
 
 
 def solve_uncondensed(U, seeds):
     out = []
     for s0 in seeds:
         try:
-            sol = least_squares(residuals, np.array(s0), args=(U,), method="trf",
-                                xtol=1e-13, ftol=1e-13, gtol=1e-13, max_nfev=600)
+            sol = least_squares(residuals, np.array(s0), jac=residuals_jac, args=(U,),
+                                method="trf", xtol=1e-13, ftol=1e-13, gtol=1e-13,
+                                max_nfev=600)
         except Exception:
             continue
         if np.linalg.norm(sol.fun) < 1e-5:
