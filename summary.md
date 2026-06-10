@@ -68,11 +68,13 @@ could not solve.
    fast with U (10⁻⁴ by U = 4): gapped at any finite U, parametrically small
    deep in the Mott regime.
 5. **Symmetry/PSG** (verification with the numerical degeneracy-splitting
-   regulator disabled): spinon sector — 4₂ screw, inversion, C₂z, TRS, and
-   fermionic antisymmetry exact to ≤ 3×10⁻¹⁷; C₂x and both glides exact
-   under a Z₂ gauge compensation (sign per z-layer). Chargon sector — same
-   pattern (pairing blocks exact; kernels at the 10⁻⁸ solver-convergence
-   floor, gauge-independently). Gauge-invariant loops mixing z- and xy-bonds
+   regulator disabled; record in `results/verification_psg_U1.txt`): both
+   matter sectors pass every generator **exactly** (deviations ≤ 3×10⁻¹⁷ or
+   identically zero): 4₂ screw, inversion, C₂z, TRS, and fermionic
+   antisymmetry plainly; C₂x and both glides under the *same* Z₂ gauge
+   compensation in both sectors (sign per z-layer; the boson rep carries no
+   spin factor — using the fermion reps there produces a spurious 10⁻⁸
+   artifact we chased down). Gauge-invariant loops mixing z- and xy-bonds
    enclose π flux: a genuine π-flux Z₂ ansatz.
 6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`):
    the π-flux state beats every symmetric competitor found at every

@@ -8,12 +8,12 @@
   time_reversal : 0.00e+00  gauge=1          OK
   pairing_antisym: 0.00e+00  gauge=1          OK
 == chargon-sector PSG check ==
-  screw_42      : 5.62e-17  gauge=1          OK
-  C2x           : 1.01e-08  gauge=tau_z      <-- VIOLATION
+  screw_42      : 0.00e+00  gauge=1          OK
+  C2x           : 0.00e+00  gauge=mu_z       OK
   inversion     : 0.00e+00  gauge=1          OK
   C2z           : 0.00e+00  gauge=1          OK
-  glide_b(mx)   : 1.01e-08  gauge=tau_z      <-- VIOLATION
-  glide_c(m110) : 1.01e-08  gauge=tau_z      <-- VIOLATION
+  glide_b(mx)   : 0.00e+00  gauge=mu_z       OK
+  glide_c(m110) : 0.00e+00  gauge=mu_z       OK
 == gap audit ==  grid min BdG gap = 0.0184; analytic min = |lam| = 0.0138 (attained on the lines (kx or ky = pi) & kz = pi, incl. A)
    chargon EXCITATION gap = 0.3434 (kernel stability margin = +0.1333)   condensate max = 0.000
 == Hessian audit (OP subspace, 20 dims) ==  min eig = -2.99387; eigs<0: 8

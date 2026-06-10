@@ -161,14 +161,28 @@ def gap_audit(p, U, nk=20):
     return float(fgap), float(fgapA), float(np.min(np.asarray(wmin)))
 
 
+ORB = {  # orbital (mu x tau) parts of the generators, 4x4
+    "screw_42": np.kron(X, np.eye(2)),
+    "C2x": np.kron(np.eye(2), X),
+    "inversion": np.eye(4, dtype=complex),
+}
+ORB["C2z"] = ORB["screw_42"] @ ORB["screw_42"]
+ORB["glide_b(mx)"] = ORB["inversion"] @ ORB["C2z"] @ ORB["C2x"]
+ORB["glide_c(m110)"] = ORB["inversion"] @ ORB["screw_42"] @ ORB["C2x"]
+# bosons (holon/doublon) are spinless: their rep is 1_nu (x) orbital part
+GENS_BOSON = {name: (np.kron(np.eye(2, dtype=complex), ORB[name]), GENS[name][1])
+              for name in ORB}
+
+
 def check_boson_symmetries(p, U, seed=0, nrand=12):
-    """Same PSG check for the chargon (boson) kernel: xi transforms with
-    U H U^+; the pairing block (zeta=+1) with U D U^T."""
+    """PSG check for the chargon (boson) kernel: xi transforms with
+    U H U^+; the pairing block (zeta=+1) with U D U^T. Note the boson rep
+    carries NO spin factor (1 in the holon-doublon space x orbital part)."""
     from sg135_solver import boson_blocks as bb
     rng = np.random.default_rng(seed)
     ks = list(HSP.values()) + [rng.uniform(-np.pi, np.pi, 3) for _ in range(nrand)]
     out = {}
-    for name, (U8, W) in GENS.items():
+    for name, (U8, W) in GENS_BOSON.items():
         best = (np.inf, None)
         for gname, G in GAUGE_CANDS.items():
             UG = G @ U8
