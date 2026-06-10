@@ -35,7 +35,7 @@ could not solve.
   with its Z₂ gauge structure resolved); it realizes the topologically
   ordered branch of the WPVZ window in mean field.
   ![bands](figures/sg135_bands_gapped_psg_U1.png)
-- Energies vs U: superconductor below U* ∈ (0.9, 1.0); gapped Z₂ insulator
+- Energies vs U: superconductor below U* ∈ (0.80, 0.85); gapped Z₂ insulator
   above; one broken-symmetry competitor (z-dimer valence-bond solid) sits
   ~10% lower — the same dimer artifact the KMH benchmark warns about.
   ![phases](figures/sg135_phases.png)
@@ -76,7 +76,8 @@ could not solve.
    spin factor — using the fermion reps there produces a spurious 10⁻⁸
    artifact we chased down). Gauge-invariant loops mixing z- and xy-bonds
    enclose π flux: a genuine π-flux Z₂ ansatz.
-6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`):
+6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`;
+   "classII" in file names is historical — see §4 for the correct PSG label):
    the π-flux state beats every symmetric competitor found at every
    U ∈ [1.0, 6.0] (margin 7–8% of |E|); at U = 1: −0.2371 vs −0.2202 (nodal
    z), −0.186 (nodal xy), −0.194 (uniform-mixed saddle); no χ-type (spinon
@@ -202,9 +203,13 @@ symmetric alternative at every U ≥ 1 we checked.
 Below U* the chargon condenses and a superconducting solution with *uniform*
 mixed-channel pairing takes over (the staggered channel stays zero once the
 condensate forms — checked by the combined staggered+condensate solve). The
-transition is pinned to **U* ∈ (0.9, 1.0)**: the SC exists and wins up to
-U = 0.9 (E = −0.238 vs all uncondensed states), and its condensate amplitude
-vanishes by U = 1.0, exactly where the gapped π-flux branch appears and wins.
+transition is **first-order at U* ∈ (0.80, 0.85)**, with both branches
+computed on both sides: at U = 0.80 the SC wins (−0.3114 vs the π-flux
+state's −0.3058); at U = 0.85 the π-flux state already wins (−0.2854 vs
+−0.2724); below U ≈ 0.8 the π-flux branch terminates (its chargon gap
+closes) and above U ≈ 1.0 the SC condensate amplitude vanishes. (A second
+red-team round caught an earlier mis-pin of this crossing that compared the
+SC against the wrong branch.)
 
 ## §6 Limitations and next steps
 

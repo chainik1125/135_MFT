@@ -22,8 +22,9 @@ axes[0].set_ylabel("spinon BdG energy $/t_{xy}$")
 axes[0].set_title(title)
 gmin = float(np.abs(ef).min())
 axes[0].annotate(f"min gap = {gmin:.4f} $t_{{xy}}$ (R–A line)" if gmin > 1e-3
-                 else f"GAPLESS: min gap = {gmin:.1e} (nodal plane $k_z=\\pi$ = Z–R–A)",
-                 xy=(0.55, 0.52), xycoords="axes fraction", fontsize=10,
+                 else f"gap = $|\\lambda| \\approx$ {gmin:.0e} across the entire"
+                      " $k_z=\\pi$ plane (Z–R–A): nodal",
+                 xy=(0.52, 0.52), xycoords="axes fraction", fontsize=10,
                  color="#b22222", fontweight="bold")
 
 if eb is not None and eb.size:

@@ -43,13 +43,19 @@ ax.plot(U, rows[:, 2], "s-", color="#27408b", lw=1.6, ms=4,
 vbs = np.array([e_vbs(u) for u in U])
 ax.plot(U, vbs, "^--", color="#777777", lw=1.4, ms=4,
         label="z-dimer VBS — breaks translation (MFT over-favors)")
-# SC points (local nk=8 combined condensed solves; condensate dies by U=1.0)
-ax.plot([0.6, 0.7, 0.8, 0.9], [-0.50291, -0.40108, -0.31141, -0.23838],
-        "*-", color="#b22222", ms=11, lw=1.2, label="SC (chargon condensate)")
+# transition region recomputed at nk=12 (transition_nk12.npy: U, E_gapped, E_SC)
+try:
+    tr = np.load("transition_nk12.npy")
+    ax.plot(tr[:, 0], tr[:, 2], "*-", color="#b22222", ms=11, lw=1.2,
+            label="SC (chargon condensate)")
+    sel = np.isfinite(tr[:, 1]) & (tr[:, 0] < 1.0)
+    ax.plot(tr[sel, 0], tr[sel, 1], "o-", color="#2e8b57", ms=4, lw=2)
+except FileNotFoundError:
+    pass
 ax.axhline(0, color="k", lw=1, ls=":", label="atomic Mott")
 ax.set_xlabel("U / $t_{xy}$", fontsize=12)
 ax.set_ylabel("$E_g$ per cell / $t_{xy}$", fontsize=12)
-ax.set_title("SG135 slave-boson states at half filling (nk=12)")
+ax.set_title(r"SG135 slave-boson states at $\nu=4$ (half filling), nk=12")
 ax.legend(fontsize=8.5, loc="lower right")
 ax.set_xlim(0.3, 6.05)
 fig.tight_layout()
