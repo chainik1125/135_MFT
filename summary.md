@@ -149,8 +149,9 @@ layer has an independent referee:
    the total energy to 3×10⁻⁸, and measures per-bond expectations directly,
    fixing the decoupling constants C = (4, 4, 8, 4) per channel — the June
    write-up's uniform 8 is wrong for three of four channels. The staggered
-   fifth channel's C = 4t_z follows from the same bond count (the stagger
-   squares away); its end-to-end referee is the gauge-equivalence test below.
+   fifth channel passed the same referee directly (`test_realspace_ch4.py`):
+   Bloch map exact, real-space ≡ k-space energy to 3×10⁻¹⁸, and C₄ = 4.0000
+   from the measured bond expectations.
 4. Gauge-equivalence test: the *pure* staggered-z state must be (and is)
    degenerate with the uniform-z state — energies agree to 10⁻⁵, limited by
    solver convergence, exercising the staggered channel's full bookkeeping.
@@ -241,10 +242,11 @@ mis-pin of this crossing that compared the SC against the wrong branch.)
   added before any statement about the true deep-Mott regime.
 - One flux pattern was explored; the systematic PSG enumeration (including
   the chargon-C₂z = −1 class with its forced-nematic condensation signature)
-  is open. The SG130 control was completed at the group-theory and
-  fixed-ansatz level (§4); its remaining open piece is whether SG130's
-  *self-consistency* selects the fragile extended-s gapped region or stays
-  nodal.
+  is open. The SG130 control is complete for the t-only model (§4): every
+  available symmetric pairing channel there shares protected zeros, so its
+  self-consistent mean field is necessarily nodal — no solve required. The
+  open piece is the SOC-extended SG130 model, where a parametrically weak
+  extended-s channel could gap it.
 - Novelty: the literature agent's sweep (`notes/literature_review.md`) plus a
   closing web sweep found no prior parton mean-field realization of the SG135
   (or any WPVZ-window) interaction-enabled insulator; the nearest relatives

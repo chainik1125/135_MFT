@@ -36,7 +36,7 @@ def bond_list():
     t_ab f+_a(r) f_b(r+d) + h.c.  Amplitudes chosen so the Bloch sum matches
     t_i g_i M_i; verified numerically in check_bloch()."""
     bonds = []
-    txy, tz, t1, t2 = TS_DEFAULT
+    txy, tz, t1, t2 = TS_DEFAULT[:4]
     # channel xy: tau^x within same mu: (mu,A)<->(mu,B), 4 in-plane diagonals
     for mu in (0, 1):
         a, b = 2 * mu + 0, 2 * mu + 1
@@ -109,7 +109,7 @@ def realspace_fermion(chi_b, Delta_b, lam, L=6):
     Returns (E0 per cell, correlation function on one xy-bond and one z-bond,
     and channel-summed bond expectations)."""
     bonds = bond_list()
-    txy, tz, t1, t2 = TS_DEFAULT
+    txy, tz, t1, t2 = TS_DEFAULT[:4]
     chan_of = []
     for n, (a, b, d, t) in enumerate(bonds):
         if abs(d[2]) == 0 and abs(d[0]) == 0.5:
