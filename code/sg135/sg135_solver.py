@@ -60,14 +60,34 @@ def kron(*ms):
     return out
 
 
-# Gamma_i in (mu x tau) space, 4x4
-GAMMAS = (kron(I2, X), kron(X, I2), kron(Z, I2), kron(Y, Y))
-TS_DEFAULT = (1.0, 0.5, 0.3, 0.3)  # t_xy, t_z, t1, t2 (write-up Fig. 15 values)
+# Gamma_i in (mu x tau) space, 4x4.
+# Channels 0-3: the uniform (Class I) decoupling of the four hoppings.
+# Channel 4: the CLASS II (PSG-twisted) z-channel - same z-bonds, but the
+# bond mean fields carry a tau-staggered sign: M = mu^x tau^z, form factor
+# g_z. Physically symmetric up to the Z2 gauge transformation G = tau^z
+# (the screw flips the stagger; G restores it). Crucially {mu^x tau^z,
+# tau^x} = 0, so its pairing adds IN QUADRATURE with the xy channel: the
+# two nodal planes gap each other with no interference.
+GAMMAS = (kron(I2, X), kron(X, I2), kron(Z, I2), kron(Y, Y), kron(X, Z))
+TS_DEFAULT = (1.0, 0.5, 0.3, 0.3, 0.5)  # t_xy, t_z, t1, t2, t_z(ClassII)
 # Decoupling constants per channel: C_i = 2 * sum_{bonds/cell} (Bloch weight)
-#   xy: 8 bonds x 1/4; z: 4 x 1/2; ch1: 8 x 1/2; ch2: 16 x 1/8
+#   xy: 8 bonds x 1/4; z: 4 x 1/2; ch1: 8 x 1/2; ch2: 16 x 1/8; ch4 = z bonds
 # VALIDATED numerically in test_realspace.py (real-space bond expectations);
 # the write-up's uniform 2 z_i = 8 (Eq. 5.53) is incorrect for xy/z/ch2.
-C_VEC = (4.0, 4.0, 8.0, 4.0)
+C_VEC = (4.0, 4.0, 8.0, 4.0, 4.0)
+
+# parameter vector p: 18 (channels 0-3 + lam,mu) or 22 (+ Class II z-channel:
+# 18 chi_b4, 19 chi_f4, 20 Delta_b4, 21 Delta_f4)
+IDX_CHB = (0, 1, 2, 3, 18)
+IDX_CHF = (4, 5, 6, 7, 19)
+IDX_DB = (8, 9, 10, 11, 20)
+IDX_DF = (12, 13, 14, 15, 21)
+
+
+def _pad22(p):
+    if p.shape[0] == 18:
+        return jnp.concatenate([p, jnp.zeros(4)])
+    return p
 
 
 def gfuncs(kx, ky, kz):
@@ -75,7 +95,7 @@ def gfuncs(kx, ky, kz):
     gz = jnp.cos(kz / 2)
     g1 = jnp.cos(kx) - jnp.cos(ky)
     g2 = jnp.sin(kx / 2) * jnp.sin(ky / 2) * jnp.cos(kz / 2)
-    return (gxy, gz, g1, g2)
+    return (gxy, gz, g1, g2, gz)
 
 
 def make_kgrid(nk=24):
@@ -96,20 +116,22 @@ _BREAK8 = jnp.diag(jnp.linspace(0.0, 1.0, 8)) * 1e-7
 
 
 def fermion_blocks(p, kx, ky, kz, ts):
+    p = _pad22(p)
     gs = gfuncs(kx, ky, kz)
     nk = kx.shape[0]
     xi = (-p[16] * jnp.eye(8, dtype=jnp.complex128) + _BREAK8)[None, :, :].repeat(nk, axis=0)
     # xi: spin-block(S) x (mu tau): S^0 (x) sum_i chi_i G_i  -> 8x8
     delta = jnp.zeros((nk, 8, 8), dtype=jnp.complex128)
-    for i in range(4):
-        xi = xi + (ts[i] * p[0 + i]) * gs[i][:, None, None] * kron(I2, GAMMAS[i])
+    for i in range(len(GAMMAS)):
+        xi = xi + (ts[i] * p[IDX_CHB[i]]) * gs[i][:, None, None] * kron(I2, GAMMAS[i])
         # pairing block: from H_f = ... -Delta_i L^y S^y Gamma_i:
         # L^y top-right = -i, so Delta-block = (-i)(-1)Delta_i S^y G_i = i Delta_i S^y G_i
-        delta = delta + (1j * ts[i] * p[8 + i]) * gs[i][:, None, None] * kron(Y, GAMMAS[i])
+        delta = delta + (1j * ts[i] * p[IDX_DB[i]]) * gs[i][:, None, None] * kron(Y, GAMMAS[i])
     return xi, delta
 
 
 def boson_blocks(p, U, kx, ky, kz, ts):
+    p = _pad22(p)
     gs = gfuncs(kx, ky, kz)
     nk = kx.shape[0]
     D = (U - 2 * p[16]) / 2.0
@@ -117,9 +139,9 @@ def boson_blocks(p, U, kx, ky, kz, ts):
     xi = (D * jnp.eye(8, dtype=jnp.complex128)
           + D0 * kron(Z, jnp.eye(4, dtype=jnp.complex128)) + _BREAK8)[None].repeat(nk, axis=0)
     delta = jnp.zeros((nk, 8, 8), dtype=jnp.complex128)
-    for i in range(4):
-        xi = xi + (ts[i] * p[4 + i]) * gs[i][:, None, None] * kron(Z, GAMMAS[i])
-        delta = delta + (ts[i] * p[12 + i]) * gs[i][:, None, None] * kron(X, GAMMAS[i])
+    for i in range(len(GAMMAS)):
+        xi = xi + (ts[i] * p[IDX_CHF[i]]) * gs[i][:, None, None] * kron(Z, GAMMAS[i])
+        delta = delta + (ts[i] * p[IDX_DF[i]]) * gs[i][:, None, None] * kron(X, GAMMAS[i])
     return xi, delta
 
 
@@ -127,31 +149,33 @@ def cond_energy(p, c8, U, ts, x=0.0):
     """k=0 condensate contribution: sandwich the k=0 boson kernel structure.
     c8 = (h_AA, h_AB, h_BA, h_BB, d_AA, d_AB, d_BA, d_BB) real amplitudes
     (sublattice order: (mu,tau) = AA, AB, BA, BB)."""
+    p = _pad22(p)
     h = c8[:4]
     d = c8[4:]
-    gs0 = (1.0, 1.0, 0.0, 0.0)  # g_i(k=0)
+    gs0 = (1.0, 1.0, 0.0, 0.0, 1.0)  # g_i(k=0)
     E = (U - p[16] - p[17]) * jnp.sum(d**2) + (p[17] - p[16]) * jnp.sum(h**2)
     # k=0 part of H_b with operators -> condensate amplitudes, in THIS module's
     # sign labeling (kernels carry +t chi g, +t Delta g; cf. KMH Eq. 4.93 which
     # uses the opposite labeling - signs here must match boson_blocks):
     #   E += sum_i t_i g_i(0) [ chi_f_i (h G_i h - d G_i d) + 2 Delta_f_i h G_i d ]
-    for i in range(2):  # g1(0) = g2(0) = 0
+    for i in (0, 1, 4):  # g1(0) = g2(0) = 0
         G = jnp.real(GAMMAS[i])
         coef = ts[i] * gs0[i]
-        E = E + coef * p[4 + i] * (h @ G @ h - d @ G @ d)
-        E = E + 2.0 * coef * p[12 + i] * (h @ G @ d)
+        E = E + coef * p[IDX_CHF[i]] * (h @ G @ h - d @ G @ d)
+        E = E + 2.0 * coef * p[IDX_DF[i]] * (h @ G @ d)
     return E
 
 
 def e_total(p, c8, U, kx, ky, kz, ts=TS_DEFAULT, x=0.0):
+    p = _pad22(p)
     xf, df = fermion_blocks(p, kx, ky, kz, ts)
     e0f = jnp.mean(fermion_e0(xf, df))
     xb, db = boson_blocks(p, U, kx, ky, kz, ts)
     e0b_k, wmin = boson_e0(xb, db)
     e0b = jnp.mean(e0b_k)
     ec = 4.0 * (p[16] + x * p[17])
-    for i in range(4):
-        ec = ec + C_VEC[i] * ts[i] * (p[0 + i] * p[4 + i] + p[8 + i] * p[12 + i])
+    for i in range(len(GAMMAS)):
+        ec = ec + C_VEC[i] * ts[i] * (p[IDX_CHB[i]] * p[IDX_CHF[i]] + p[IDX_DB[i]] * p[IDX_DF[i]])
     ec = ec + cond_energy(p, c8, U, ts, x)
     return e0f + e0b + ec
 

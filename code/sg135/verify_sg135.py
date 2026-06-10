@@ -58,20 +58,33 @@ def blocks_at(p, k):
     return np.asarray(xi[0]), np.asarray(dl[0])
 
 
+GAUGE_CANDS = {"1": np.eye(8, dtype=complex),
+               "tau_z": kron3(I2, I2, Z),
+               "mu_z": kron3(I2, Z, I2),
+               "mu_z*tau_z": kron3(I2, Z, Z)}
+
+
 def check_symmetries(p, seed=0, nrand=16, tol=5e-7):
-    """Returns dict name -> worst deviation over HSPs + random k."""
+    """Returns dict name -> (worst deviation, gauge) over HSPs + random k.
+    Each generator is checked with every IGG=Z2 gauge candidate G (PSG check:
+    (GU) H(k) (GU)^+ = H(Wk)); the best gauge is reported. '1' = plain."""
     rng = np.random.default_rng(seed)
     ks = list(HSP.values()) + [rng.uniform(-np.pi, np.pi, 3) for _ in range(nrand)]
     out = {}
     for name, (U, W) in GENS.items():
-        worst = 0.0
-        for k in ks:
-            k = np.asarray(k, float)
-            xi, dl = blocks_at(p, k)
-            xiW, dlW = blocks_at(p, W @ k)
-            worst = max(worst, np.abs(U @ xi @ U.conj().T - xiW).max(),
-                        np.abs(U @ dl @ U.T - dlW).max())
-        out[name] = worst
+        best = (np.inf, None)
+        for gname, G in GAUGE_CANDS.items():
+            UG = G @ U
+            worst = 0.0
+            for k in ks:
+                k = np.asarray(k, float)
+                xi, dl = blocks_at(p, k)
+                xiW, dlW = blocks_at(p, W @ k)
+                worst = max(worst, np.abs(UG @ xi @ UG.conj().T - xiW).max(),
+                            np.abs(UG @ dl @ UG.T - dlW).max())
+            if worst < best[0]:
+                best = (worst, gname)
+        out[name] = best
     # time reversal (antiunitary): isy xi(-k)* isy^+ = xi(k); same for Delta
     Tm = kron3(1j * Y, I2, I2)
     worst = 0.0
@@ -81,14 +94,14 @@ def check_symmetries(p, seed=0, nrand=16, tol=5e-7):
         xim, dlm = blocks_at(p, -k)
         worst = max(worst, np.abs(Tm @ xim.conj() @ Tm.conj().T - xi).max(),
                     np.abs(Tm @ dlm.conj() @ Tm.T - dl).max())
-    out["time_reversal"] = worst
+    out["time_reversal"] = (worst, "1")
     # fermion antisymmetry of the pairing block: Delta(k) = -Delta(-k)^T
     worst = 0.0
     for k in ks:
         _, dl = blocks_at(p, np.asarray(k, float))
         _, dlm = blocks_at(p, -np.asarray(k, float))
         worst = max(worst, np.abs(dl + dlm.T).max())
-    out["pairing_antisym"] = worst
+    out["pairing_antisym"] = (worst, "1")
     return out
 
 
@@ -152,11 +165,18 @@ if __name__ == "__main__":
     sol = np.load(sys.argv[1], allow_pickle=True)
     arr = np.atleast_2d(np.asarray(sol, float))
     q = arr[0]
-    p, c8 = (q[:18], q[18:]) if q.size >= 26 else (q[:18], np.zeros(8))
+    # layouts: 18 = channels 0-3; 22 = + Class II z-channel (idx 18-21);
+    # 26 = 18 + condensates; 30 = 22 + condensates
+    if q.size == 18 or q.size == 22:
+        p, c8 = q, np.zeros(8)
+    elif q.size == 26:
+        p, c8 = q[:18], q[18:]
+    else:
+        p, c8 = q[:22], q[22:]
     Uval = float(sys.argv[2]) if len(sys.argv) > 2 else None
-    print("== symmetry check (worst |U H U^+ - H(Wk)| over HSPs + 16 random k) ==")
-    for name, dev in check_symmetries(p).items():
-        print(f"  {name:14s}: {dev:.2e} {'OK' if dev < 5e-7 else '<-- VIOLATION'}")
+    print("== symmetry check (worst |GU H (GU)^+ - H(Wk)|; best Z2 gauge G shown) ==")
+    for name, (dev, g) in check_symmetries(p).items():
+        print(f"  {name:14s}: {dev:.2e}  gauge={g:10s} {'OK' if dev < 5e-7 else '<-- VIOLATION'}")
     if Uval is not None:
         fgap, fgapA, wmin = gap_audit(p, Uval)
         print(f"== gap audit ==  min BdG gap = {fgap:.4f}  gap(A) = {fgapA:.4f}"
