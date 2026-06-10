@@ -35,12 +35,10 @@ could not solve.
   with its Z₂ gauge structure resolved); it realizes the topologically
   ordered branch of the WPVZ window in mean field.
   ![bands](figures/sg135_bands_gapped_psg_U1.png)
-- Energies vs U: superconductor below U* ∈ (0.6, 1.0); gapped Z₂ insulator
+- Energies vs U: superconductor below U* ∈ (0.9, 1.0); gapped Z₂ insulator
   above; one broken-symmetry competitor (z-dimer valence-bond solid) sits
   ~10% lower — the same dimer artifact the KMH benchmark warns about.
   ![phases](figures/sg135_phases.png)
-
-*(≈290 words)*
 
 ---
 
@@ -197,10 +195,12 @@ free of interference cost. The resulting π-flux state gaps both nodal
 planes, leaves the residual lines gapped by λ, and wins by 7–8% over every
 symmetric alternative at every U ≥ 1 we checked.
 
-Below U* ∈ (0.6, 1.0) the chargon gap closes and a condensed (superconducting)
-solution with uniform mixed-channel pairing takes over (computed at U = 0.6;
-the precise crossing against the π-flux state was not pinned — the combined
-staggered+condensate solve is future work).
+Below U* the chargon condenses and a superconducting solution with *uniform*
+mixed-channel pairing takes over (the staggered channel stays zero once the
+condensate forms — checked by the combined staggered+condensate solve). The
+transition is pinned to **U* ∈ (0.9, 1.0)**: the SC exists and wins up to
+U = 0.9 (E = −0.238 vs all uncondensed states), and its condensate amplitude
+vanishes by U = 1.0, exactly where the gapped π-flux branch appears and wins.
 
 ## §6 Limitations and next steps
 

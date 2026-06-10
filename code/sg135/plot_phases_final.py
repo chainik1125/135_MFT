@@ -43,8 +43,9 @@ ax.plot(U, rows[:, 2], "s-", color="#27408b", lw=1.6, ms=4,
 vbs = np.array([e_vbs(u) for u in U])
 ax.plot(U, vbs, "^--", color="#777777", lw=1.4, ms=4,
         label="z-dimer VBS — breaks translation (MFT over-favors)")
-# SC points (local nk=8 condensed solves)
-ax.plot([0.6], [-0.50291], "*", color="#b22222", ms=14, label="SC (chargon condensate)")
+# SC points (local nk=8 combined condensed solves; condensate dies by U=1.0)
+ax.plot([0.6, 0.7, 0.8, 0.9], [-0.50291, -0.40108, -0.31141, -0.23838],
+        "*-", color="#b22222", ms=11, lw=1.2, label="SC (chargon condensate)")
 ax.axhline(0, color="k", lw=1, ls=":", label="atomic Mott")
 ax.set_xlabel("U / $t_{xy}$", fontsize=12)
 ax.set_ylabel("$E_g$ per cell / $t_{xy}$", fontsize=12)
