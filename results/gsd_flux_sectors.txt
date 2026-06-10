@@ -1,0 +1,20 @@
+GSD diagnostic: Z2 flux-sector energy splittings (parton mean-field level)
+Method: thread Z2 fluxes through the 3 torus cycles = (anti)periodic parton
+boundary conditions = half-step momentum-grid offsets; evaluate E_g per cell
+of all 2^3 = 8 sectors at the converged order parameters; max spread vs L.
+
+PSG-twisted gapped state, U=0.85 (lam=-0.0244), sol_psg_U085.npy:
+ L= 6: 2.144e-03            L=14: 3.818e-05 (ratio 0.423)
+ L= 8: 6.417e-04 (r 0.299)  L=16: 1.698e-05 (ratio 0.445)
+ L=10: 2.284e-04 (r 0.356)  L=18: 7.835e-06 (ratio 0.461)
+ L=12: 9.020e-05 (r 0.395)  L=20: 3.720e-06 (ratio 0.475)
+ ratio per dL=2 -> const ~0.5 (= L^q e^{-aL} form; power law would drift to 1)
+
+Gapped state U=1.0 (lam=-0.0138): 1.0e-2 (L=4) -> 4.0e-5 (L=16), same form,
+slower (smaller A-line gap).
+Nodal z-state control, U=1.0: 2.8e-2 (L=4) -> 6.1e-4 (L=16), ~L^-3 power law.
+
+Conclusion: the 8 flux sectors of the PSG-twisted state become degenerate in
+the thermodynamic limit (all sectors individually gapped), consistent with
+GSD = 8 on T^3 - the 3+1d Z2 topological order count. Parton-level proxy;
+the definitive object is the projected-wavefunction GSD.
