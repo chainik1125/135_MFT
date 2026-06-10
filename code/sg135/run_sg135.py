@@ -78,9 +78,16 @@ def residuals_jac(p, U):
 
 def solve_uncondensed(U, seeds):
     out = []
+
+    def rf(s):
+        return np.nan_to_num(residuals(s, U), nan=1e3, posinf=1e3, neginf=-1e3)
+
+    def jf(s):
+        return np.nan_to_num(residuals_jac(s, U), nan=0.0, posinf=0.0, neginf=0.0)
+
     for s0 in seeds:
         try:
-            sol = least_squares(residuals, np.array(s0), jac=residuals_jac, args=(U,),
+            sol = least_squares(rf, np.array(s0), jac=jf,
                                 method="trf", xtol=1e-13, ftol=1e-13, gtol=1e-13,
                                 max_nfev=600)
         except Exception:
@@ -114,11 +121,18 @@ _resid_cond_jac = jax.jit(jax.jacfwd(_resid_cond_jax, argnums=0))
 
 def solve_condensed(U, seeds):
     out = []
+
+    def rf(q):
+        return np.nan_to_num(np.asarray(_resid_cond_jit(jnp.asarray(q), U)),
+                             nan=1e3, posinf=1e3, neginf=-1e3)
+
+    def jf(q):
+        return np.nan_to_num(np.asarray(_resid_cond_jac(jnp.asarray(q), U)),
+                             nan=0.0, posinf=0.0, neginf=0.0)
+
     for q0 in seeds:
         try:
-            sol = least_squares(lambda q: np.asarray(_resid_cond_jit(jnp.asarray(q), U)),
-                                np.array(q0),
-                                jac=lambda q: np.asarray(_resid_cond_jac(jnp.asarray(q), U)),
+            sol = least_squares(rf, np.array(q0), jac=jf,
                                 method="trf", xtol=1e-13, ftol=1e-13, gtol=1e-13,
                                 max_nfev=800)
         except Exception:

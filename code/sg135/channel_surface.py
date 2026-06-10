@@ -51,8 +51,11 @@ free0 = np.array([0.05, 0.05, -0.05])
 for i, dxy in enumerate(grid):
     fseed = free0.copy()
     for j, dz in enumerate(grid):
-        sol = least_squares(lambda f: np.asarray(resid_j(jnp.asarray(f), dxy, dz)), fseed,
-                            jac=lambda f: np.asarray(jac_j(jnp.asarray(f), dxy, dz)),
+        rf = lambda f: np.nan_to_num(np.asarray(resid_j(jnp.asarray(f), dxy, dz)),
+                                     nan=1e3, posinf=1e3, neginf=-1e3)
+        jf = lambda f: np.nan_to_num(np.asarray(jac_j(jnp.asarray(f), dxy, dz)),
+                                     nan=0.0, posinf=0.0, neginf=0.0)
+        sol = least_squares(rf, fseed, jac=jf,
                             method="trf", xtol=1e-12, ftol=1e-12, max_nfev=200)
         if np.linalg.norm(sol.fun) < 1e-6:
             E[i, j] = float(e_total(build_p(jnp.asarray(sol.x), dxy, dz), Z8, U, kx, ky, kz))
