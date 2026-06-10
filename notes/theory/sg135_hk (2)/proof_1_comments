@@ -1,0 +1,36 @@
+Specific points:
+
+1. Please change to "This suggest that additional care is needed to study..."
+2. Ref 9 - no update available
+   Ref 30: updated reference available at https://doi.org/10.1103/PhysRevB.108.085106
+   Ref 32: no update available
+   Ref 35: updated reference available at https://doi.org/10.1038/s41467-023-41465-6
+   Ref 36: no update available
+   Ref 37: no update available
+   Ref 53: updated reference available at https://doi.org/10.1103/PhysRevB.108.035121
+   Ref 55: no update available
+   Ref 57: This is duplicated with Ref 32, and should be merged with Ref 32
+
+3. Updated year OK
+4. city is Cambridge, UK
+5. First sentence of the footnote should read "We are grateful to B. Wieder for pointing out a misprint in Ref. [48]"
+
+FQ. The funding information is correct. The two funding sources are the Alfred P Sloan Foundation (no grant number), and the National Science Foundation under grant DMR-1945058
+Q. This reference is correct
+
+
+Other changes:
+
+1. Re-insert group numbers for each mention of a Space group. For example, ``Space group $P4_2/mbc1'$'' in Line 208 should read ``Space group $P4_2/mbc1'$ (No. 135)''.
+
+2. In line 206, remove equal sign in ``$P4_2/mbc1'=$ must have...''
+
+3. In line 601 there is an extra bracket in the expression which should read  $U_1/2>\xi(\mathbf{k})$
+
+4. There is an extra superscript on $H^{130}_{130}$ in Eq. 62 and lines 1080 and 1082. It should read $H_{130}$.
+
+5. In lines 1450, 1458, and 1462 the subscripts on $A=\mu_y\tau_y\sigma^y$ should be rendered as superscripts. It should read $A=\mu^y\tau^y\sigma^y$.
+
+6. In line 1490 the subscripts on $A=\mu_y\tau_z\sigma_y$ should be rendered as superscripts. It should read $A=\mu^y\tau^z\sigma^y$.
+
+7. In line 1490 the subscripts on $A=\tau_y\sigma_x$ should be rendered as superscripts. It should read  $A=\tau^y\sigma^x$.

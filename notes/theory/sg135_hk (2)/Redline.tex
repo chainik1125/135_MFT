@@ -1,0 +1,199 @@
+\documentclass[aps,reprint,notitlepage,onecolumn,12pt]{revtex4-2}
+\usepackage{amssymb,amsfonts,amsmath, amsthm, amsbsy}
+\usepackage{caption,color,graphicx,paralist, subcaption, placeins, array, mathtools, url, mdwlist, color,tikz} 
+\usepackage[text={6.75in,9.5in},centering,letterpaper]{geometry}
+\usepackage[linktoc=all,hypertexnames=false,colorlinks=true,urlcolor=blue,linkcolor=blue,citecolor=blue]{hyperref} % hyperlinks equations when using \eqref{} 
+\usepackage[shortlabels]{enumitem}
+\usepackage{csquotes}
+\usetikzlibrary{decorations.pathmorphing, calc, arrows.meta}
+\newcommand*\dif{\mathop{}\!\mathrm{d}}
+\usepackage{setspace} % lets you doublespace if you're into that
+
+\DeclarePairedDelimiter\bra{\langle}{\rvert} % \bra{} for a bra, use \bra*{} to auto-size
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}% \ket{} for a ket, use \ket*{} to auto-size
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2} % \braket{}{}, \braket*{}{}
+
+\setlength{\parskip}{1.0ex plus0.2ex minus0.2ex}
+\setlength{\parindent}{0.0in}
+\renewcommand{\baselinestretch}{1.2}
+
+\renewcommand*{\arraystretch}{1.5}
+
+\everymath={\displaystyle}
+ \numberwithin{equation}{section}
+ 
+\usepackage[thinc]{esdiff} 
+\usepackage{chemformula}
+
+\renewcommand{\Re}[1]{\text{\textit{Re}}[#1]} % real part - \Re{}
+\renewcommand{\Im}[1]{\text{\textit{Im}}[#1]} % im part - \Im{}
+
+\newcommand{\N}{\mathbb{N}} % natural numbers shortcut
+\newcommand{\Z}{\mathbb{Z}} % integers shortcut
+\newcommand{\R}{\mathbb{R}} % real numbers shortcut
+\newcommand{\F}{\mathbb{F}} % arbitrary field shortcut
+ 
+ 
+ % Math stuff - lets you make \begin{theorem} commands and whatnot. the environments in general work the same as the ppart environment.
+\newtheorem{Theorem}{Theorem}[section]
+\newtheorem{Conjecture}[Theorem]{Conjecture}
+\newtheorem{Lemma}[Theorem]{Lemma}
+\newtheorem{Proposition}[Theorem]{Proposition}
+\newtheorem{Corollary}[Theorem]{Corollary}
+\newtheorem{Example}[Theorem]{Example}
+\newtheorem{Definition}[Theorem]{Definition}
+\newtheorem*{Notation}{Notation}
+\newtheorem{Remark}[Theorem]{Remark}
+\newtheorem{Assumption}{Assumption}
+
+\newenvironment{exercise}[2][]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}} % Exercise environment.
+\newenvironment{ppart}[2][]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}} % Part environment.
+
+% Dmitry Additions
+\newtheorem*{strategy}{Strategy}
+\newcommand{\pd}[3]{\bigg(\frac{\partial #1}{\partial #2}\bigg)_{#3}}
+\newcommand{\funcd}[3]{\bigg(\frac{\delta #1}{\delta #2}\bigg)_{#3}}
+\usepackage{cleveref}
+\usepackage{braket}
+\usepackage{slashed}
+\DeclareMathOperator{\sech}{sech}
+\usepackage{dsfont}
+\usepackage{cancel}
+\usepackage{xcolor}
+\newcommand\Ccancel[2][black]{\renewcommand\CancelColor{\color{#1}}\cancel{#2}}
+\usepackage{simpler-wick}
+\DeclareMathOperator{\Tr}{Tr}
+\usepackage[gobble=auto]{pythontex}
+\usepackage{pgfplots}
+\usepackage{ulem}
+\usepackage{placeins}
+
+\def\sg135{$P4_2/mbc1^\prime$ (\# 135)}
+\def\sgb{$P4/ncc1^\prime$ (\# 130)}
+
+
+\begin{document}
+\title{Requested changes for manuscript XF10795B Proof 2}
+\maketitle
+\begin{enumerate}
+    \item Add `` No. 135'' after \textbf{every} space group symbol $P4_2/mbc1'$. That is, wherever $P4_2/mbc1'$ appears, it should be replaced with $P4_2/mbc1'$ (No. 135). Previously, this was only changed for one mention of the space group. The line numbers on which this appears are:
+    \begin{enumerate}
+        \item \textbf{Line 198}
+        \item \textbf{Line 206}
+        \item \textbf{Line 212}
+        \item \textbf{Line 214}
+        \item \textbf{Line 219}
+        \item \textbf{Line 224}
+        \item \textbf{Line 264}
+        \item \textbf{Line 296}
+        \item \textbf{Line 697}
+        \item \textbf{Line 760}
+        \item \textbf{Line 762}
+        \item \textbf{Line 771}
+        \item \textbf{Line 778}
+        \item \textbf{Line 781}
+        \item \textbf{Line 799}
+        \item \textbf{Text in Fig 8}
+        \item \textbf{Line 958}
+        \item \textbf{Line 998}
+        \item \textbf{Line 1016}
+        \item \textbf{Line 1037}
+        \item \textbf{Line 1048}
+        \item \textbf{Line 1076}
+        \item \textbf{Line 1089}
+        \item \textbf{Line 1105}
+        \item \textbf{Line 1167}
+        \item \textbf{Line 1172}
+        \item \textbf{Line 1181}
+        \item \textbf{Line 1196}
+        \item \textbf{Line 1228}
+        \item \textbf{Line 1310}
+        \item \textbf{Line 1318}
+        \item \textbf{Line 1341}
+        \item \textbf{Line 1422}
+        \item \textbf{Line 1428}
+        \item \textbf{Line 1430}
+        \item \textbf{Line 1432}
+        \item \textbf{Line 1475}
+        \item \textbf{Text in Fig 17}
+        \item \textbf{Line 1524}
+        \item \textbf{Line 1526}
+        \item \textbf{Line 1527}
+        \item \textbf{Line 1528}
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    \end{enumerate}
+    \item Add `` No. 130'' after \textbf{every} space group symbol $P4/ncc1'$. That is, wherever $P4/ncc1'$ appears, it should be replaced with $P4/ncc1'$ (No. 130). Previously, this was only changed for one mention of the space group. The line numbers on which this amendment should be made are:
+    \begin{enumerate}
+        \item \textbf{Line 239}
+        \item \textbf{Line 293}
+        \item \textbf{Line 697}
+        \item \textbf{Line 761}
+        \item \textbf{Line 771}
+        \item \textbf{Line 800}
+        \item \textbf{Text in Fig 8}
+        \item \textbf{Line 1055}
+        \item \textbf{Line 1057}
+        \item \textbf{Line 1059}
+        \item \textbf{Line 1062}
+        \item \textbf{Line 1064}
+        \item \textbf{Line 1085}
+        \item \textbf{Line 1094}
+        \item \textbf{Line 1106}
+        \item \textbf{Line 1133}
+        \item \textbf{Line 1136}
+        \item \textbf{Line 1229}
+        \item \textbf{Line 1267}
+        \item \textbf{Line 1268}
+        \item \textbf{Line 1310}
+        \item \textbf{Line 1318}
+        \item \textbf{Line 1341}
+        \item \textbf{Line 1400}
+        \item \textbf{Line 1406}
+        \item \textbf{Line 1429}
+        \item \textbf{Line 1484}
+        \item \textbf{Line 1486}
+        \item \textbf{Line 1501}
+        \item \textbf{Text in Fig 17}
+        \item \textbf{Line 1524}
+        \item \textbf{Line 1526}
+        \item \textbf{Line 1533}
+        \item \textbf{Line 1534}
+        \item \textbf{Line 1535}
+        
+        
+        
+        
+    \end{enumerate}
+    \item Add `` No. 14'' after \textbf{every} space group symbol ``$P2_1/c1'$''. That is, wherever ``$P2_1/c1'$'' appears, it should be replaced with ``$P4/nccc1'$ (No. 14)''. Previously, this was only changed for one mention of the space group. The line numbers on which this appears are:
+    \begin{enumerate}
+        \item \textbf{Line 771}
+        \item \textbf{Line 1386}
+        \item \textbf{Line 1386}
+        \item \textbf{Line 1397}
+        \item \textbf{Line 1401}
+        \item \textbf{Line 1405}
+        \item \textbf{Line 1429}
+        
+        \item \textbf{Line 1510}
+        \item \textbf{Line 1511}
+    \end{enumerate}
+    \item $P4_1/c1'$ should be changed to $P2_1/c1'$
+        \begin{enumerate}
+            \item \textbf{Line 1128}
+            \item \textbf{Line 1229}
+            \item \textbf{Line 1267}
+        \end{enumerate}
+\end{enumerate}
+
+\end{document}

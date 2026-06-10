@@ -1,0 +1,509 @@
+\documentclass[aps,reprint,notitlepage,onecolumn,12pt]{revtex4-2}
+\usepackage{amssymb,amsfonts,amsmath, amsthm, amsbsy}
+\usepackage{caption,color,graphicx,paralist, subcaption, placeins, array, mathtools, url, mdwlist, color,tikz} 
+\usepackage[text={6.75in,9.5in},centering,letterpaper]{geometry}
+\usepackage[linktoc=all,hypertexnames=false,colorlinks=true,urlcolor=blue,linkcolor=blue,citecolor=blue]{hyperref} % hyperlinks equations when using \eqref{} 
+\usepackage[shortlabels]{enumitem}
+\usepackage{csquotes}
+\usetikzlibrary{decorations.pathmorphing, calc, arrows.meta}
+\newcommand*\dif{\mathop{}\!\mathrm{d}}
+\usepackage{setspace} % lets you doublespace if you're into that
+
+\DeclarePairedDelimiter\bra{\langle}{\rvert} % \bra{} for a bra, use \bra*{} to auto-size
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}% \ket{} for a ket, use \ket*{} to auto-size
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2} % \braket{}{}, \braket*{}{}
+
+\setlength{\parskip}{1.0ex plus0.2ex minus0.2ex}
+\setlength{\parindent}{0.0in}
+\renewcommand{\baselinestretch}{1.2}
+
+\renewcommand*{\arraystretch}{1.5}
+
+\everymath={\displaystyle}
+ \numberwithin{equation}{section}
+ 
+\usepackage[thinc]{esdiff} 
+\usepackage{chemformula}
+
+\renewcommand{\Re}[1]{\text{\textit{Re}}[#1]} % real part - \Re{}
+\renewcommand{\Im}[1]{\text{\textit{Im}}[#1]} % im part - \Im{}
+
+\newcommand{\N}{\mathbb{N}} % natural numbers shortcut
+\newcommand{\Z}{\mathbb{Z}} % integers shortcut
+\newcommand{\R}{\mathbb{R}} % real numbers shortcut
+\newcommand{\F}{\mathbb{F}} % arbitrary field shortcut
+ 
+ 
+ % Math stuff - lets you make \begin{theorem} commands and whatnot. the environments in general work the same as the ppart environment.
+\newtheorem{Theorem}{Theorem}[section]
+\newtheorem{Conjecture}[Theorem]{Conjecture}
+\newtheorem{Lemma}[Theorem]{Lemma}
+\newtheorem{Proposition}[Theorem]{Proposition}
+\newtheorem{Corollary}[Theorem]{Corollary}
+\newtheorem{Example}[Theorem]{Example}
+\newtheorem{Definition}[Theorem]{Definition}
+\newtheorem*{Notation}{Notation}
+\newtheorem{Remark}[Theorem]{Remark}
+\newtheorem{Assumption}{Assumption}
+
+\newenvironment{exercise}[2][]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}} % Exercise environment.
+\newenvironment{ppart}[2][]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}} % Part environment.
+
+% Dmitry Additions
+\newtheorem*{strategy}{Strategy}
+\newcommand{\pd}[3]{\bigg(\frac{\partial #1}{\partial #2}\bigg)_{#3}}
+\newcommand{\funcd}[3]{\bigg(\frac{\delta #1}{\delta #2}\bigg)_{#3}}
+\usepackage{cleveref}
+\usepackage{braket}
+\usepackage{slashed}
+\DeclareMathOperator{\sech}{sech}
+\usepackage{dsfont}
+\usepackage{cancel}
+\usepackage{xcolor}
+\newcommand\Ccancel[2][black]{\renewcommand\CancelColor{\color{#1}}\cancel{#2}}
+\usepackage{simpler-wick}
+\DeclareMathOperator{\Tr}{Tr}
+\usepackage[gobble=auto]{pythontex}
+\usepackage{pgfplots}
+\usepackage{ulem}
+\usepackage{placeins}
+
+\def\sg135{$P4_2/mbc1^\prime$ (\# 135)}
+\def\sgb{$P4/ncc1^\prime$ (\# 130)}
+
+
+\begin{document}
+\title{Response to Reviewer Comments on \\``Ground state stability, symmetry, and degeneracy in Mott insulators with long range interactions" }
+\author{Dmitry Manning-Coe}
+\author{Barry Bradlyn}
+\maketitle
+
+Dear Editor,
+
+Thank you for stewarding this work through the review process. We would also like to thank the referees for their comments and constructive suggestions. Both referees acknowledged the technical merit of our work, and pointed out several points that could use clarification. In our revised manuscript, we have taken the Referees' comments into account by adding additional context regarding the application of LSM theorems to HK models, improving our discussion of the salient features of the single particle Green function, and expanding our discussion regarding the absence of magnetic ordering in our models.
+
+We feel that the changes outlined above have improved the quality and clarity of our manuscript. Below please find a more detailed summary of changes, as well as a point-by-point response to the referee comments. We hope you and the Referees now find our work suitable for publication in Physical Review B.
+
+\vspace{5ex}
+
+Sincerely,
+
+{Dmitry Manning-Coe},
+and {Barry Bradlyn}
+
+\newpage
+\section*{List of Changes}
+\begin{itemize}
+	\item Added a discussion of the relation of our work to Ref.~\cite{lsmyin2022} pointed out by the referee, and clarified the difference between standard LSM theorems that use only translation symmetry, and the crystal-symmetry-enriched LSM theorems of Ref.~\cite{watanabe2015filling}.
+	\item Added a discussion of the motivation for considering space groups 130 and 135, both in terms of experimentally relevant material systems and general theoretical questions.
+	\item Added a discussion about how thermodynamic quantities beyond the spin susceptibility can be computed for HK models using our formalism.
+	\item Added a discussion of the meaning of poles, zeros, and discontinuities in the single-particle Green function.
+	\item Clarified that particle-hole symmetry is not essential for our conclusions, though where it is present it does not require a detailed consideration of the energetics of the system.
+	\item Added a proof for the absence of magnetic order in the ground state of generic HK models, and clarified our working definition of a spin liquid.
+	\item Added an appendix with the explicit forms of the ground state wavefunction at the $\Gamma$ and $A$ point in our model Hamiltonians in space groups 130 and 135. 
+	\item Added a general discussion of position-space long range entanglement in HK models.
+    \item Fixed several typographical errors and added additional references.
+\end{itemize}
+\newpage
+
+% \section{To-do summary}
+% \begin{enumerate}
+%     \item \sout{\textbf{FIX $\mu$ problem!}. For N terms, you only shifted down by 2, whereas you should have shifted down by 4(2)}.
+%     \item \sout{Same thing for the N and F terms.}
+% \end{enumerate}
+% \begin{enumerate}
+%     \item LSM theorem - just explain no crystal symmetry.
+%     \item Space Group 14 - explain that it's an example where crystal symmetry gives minimal additional constraint.
+%     \item Exact diagonalization - Say no and cite Philip.
+%     \item Experimental candidates - Gadway momentum lattices
+%     \item Thermodynamics - say magnetic susceptibility and cite philip for how others can be done.\footnote{Something like `these techniques have been developed by others and can be straightforwardly extended to our case'.}
+%     \item \sout{Typo - fix} look for others.
+%     \item Zeroes and poles, \sout{discontinuity}.
+%         \begin{enumerate}
+%             \item Added explicit Green function to explain discontinuity.
+%             \item Could also expand more on the zeroes and poles.
+%         \end{enumerate}
+%     \item Spin liquid, magnetic order, 130 cat state - Ground state at Gamma and A for 130, 135 with N and F. Perhaps this lives in another appendix section...
+%     \item Real space ground state - not sure, isn't it just the equal weight superposition of all the momentum states? You could just do the Fourier transform, but what would it tell you? I guess you could straightforwardly calculate, say, the local magnetic moment and the local charge. Could you straightforwardly calculate the entanglement?
+% \end{enumerate}
+% In other words the to-do is:
+% \begin{enumerate}
+%     \item Write down ground state at Gamma and A point for:
+%         \begin{enumerate}
+%             \item 130 + N,F at Gamma and A
+%             \item 135 + N,F at Gamma and A
+%             \item 135 + $U_1$ at A (for the spin-liquid point) - actually we already explicitly wrote this down!
+%         \end{enumerate}
+%     \item Write out the explicit green function matrix to show the discontinuity in the zeros.
+%     \item Say words and make relevant citations.
+% \end{enumerate}
+\section{Report of referee 1}
+
+\textit{In this work, the authors have studied a generalized Hatsugai-Kohmoto (HK) model, which they call the orbital-HK model.
+The motivation for such model is twofold: 1) The original HK has extensive ground-state
+degeneracy due to unpaired $S=1/2$ spin of electron; 2) The HK model
+only involves $S_z$-conserved interaction. 
+So, they try to solve these two problems in this paper.}\\
+
+\textit{Although general tools to solve above problems are lacking, the
+authors study several cases to demonstrate, e.g. on graphene, on
+Kane-Mele model.
+It seems that since the effective model for each
+momentum is like multi-site Hubbard model, the extensive ground-state
+degeneracy can be lifted, thus the ground state now is stable to
+ferromagnetic instability. 
+I think this is the main result of this work.}\\
+
+\textit{Frankly speaking, it is still very hard to relate findings in the HK
+or the orbital-HK models proposed here to the most-studied many-body
+system, the Hubbard model. 
+But, the recent perturbative RG analysis similar to 1990’s RG treatment for Fermi liquid seems to establish the stability of HK physics. 
+Thus, we may think the HK model as a new fixed point of general many-body systems.}\\
+
+\textit{Therefore, the work in this paper contributes to this point and
+provides detailed studies on how to reduced (unphysical) extensive ground-state degeneracy and how to add complicated interaction without
+breaking the solvability of HK-like models. 
+Considering above contributions to our understanding of HK model, which will be
+interesting for general readers in the field of quantum many-body
+physics, I think this paper can be published in Physical Review B
+after they have addressed the following comments.}\\
+
+We thank the referee for their thoughtful analysis of the technical merits of our work. Below we address the specific comments of the referee:
+
+
+\textbf{\textit{Question 1: The authors argue that LSM theorem is not reliable in models with long-ranged interaction, but a work on two-band version of HK model [PRB 106, 155119 (2022)] has just given a proof on LSM and related
+particle density to the insulating states.}}\\
+
+The argument relating particle density to the possibility of insulating states given in \cite{lsmyin2022} is an interesting example of a constraint on a HK type system.  There are, however, two reasons why we believe it cannot be directly translated to our case. First, we are considering a stronger type of LSM theorem, whose filling constraints derive from crystal and time-reversal symmetries, given in \cite{watanabe2015filling}, \cite{watanabe2016fillingenforced}. The argument in the reference considers the constraints that arise from having only translation symmetry. This, for example, allows the theorem in the reference to show that the three-quarter filled state, $n=3$ , is insulating, which is ruled out for time-reversal symmetric systems by Kramer's degeneracy. This is significant, because there is no known way to extend the technique used in \cite{lsmyin2022} to crystal and time-reversal symmetric systems. The only known extensions to this case use locality in an essential way, as in Ref.~\cite{watanabe2015filling}.\\
+
+\indent Second, the argument in the reference is mainly about the ``forward'' direction of the LSM theorem, whereas we are interested in the ``backward'' direction. The first allows us to say that if a system has a gapped, non-degenerate, insulating ground state, it must have a given filling. This is shown in the reference for a 1D, translationally invariant system. In our work, we are interested in the converse statement: whether a given filling implies a gapped, non-degenerate, insulating ground state. For this to be proved in the reference, it would need to be established that $\hat{U}\ket{\Psi_0}$ and $\ket{\Psi_0}$ are distinct states. Whilst this is conjectured, it is not proved. Further, by Kramer's theorem, we know that in the time-reversal symmetric case, this conjecture must at least be false for the $n=3$ case. \\
+
+We have added the following passage to the text to make readers aware of the contribution in this work:
+
+\textit{``For the case of a 1D, translationally invariant HK model it was shown in \cite{lsmyin2022} that an insulating state must have an integer number of electrons per unit cell. Since it is simpler to calculate the filling than to determine whether the system is insulating, we are primarily concerned here with the converse statement: whether a given filling implies an insulating state."}\\
+
+
+\textbf{\textit{Question 2: Why the authors study the double-Dirac semimetals model with space group $P4_2/mbc1'$, is there any physical motivation, any realistic materials?}}
+
+
+Theoretically, we wanted to understand whether interactions allowed topological states that were fundamentally different from topological states in non-interacting systems. The bounds on the filling at which a system with a given space group symmetry can realize an insulating state given in \cite{watanabe2015filling} allow, but do not require, crystals with the symmetry of space group $P42/mbc1'$ (\#135) to have an insulating state at half-filling. We wanted to understand first whether an interacting model invariant under space group $P42/mbc1'$ (\#135) can have a symmetric, insulating ground state, and second whether that insulating state had topological features. In section IV ``More General Interactions" of our manuscript we find this insulating state. This in turn raises the question of whether the filling constraints of \cite{watanabe2015filling} apply to long range interacting HK models. To that end, we show that the filling bound for interacting systems is violated in space group $P4/ncc1'$ (\# 130) and it's simplified version $P2_1/c1'$ (\# 14). This suggests that HK models are not subject to these filling constraints. \\
+
+
+\indent Experimentally, the layered borocarbide compounds are candidates for materials invariant under the symmetries of space group \# 135 and where interactions are important \cite{wiitkarborocarbide1994}. 
+For space group \#130, the most important candidate material is Copper Bismuth Oxide~\cite{bradlyn2016dirac}, which is known to be a Mott insulator with a gapped double Dirac fermion~\cite{disante2017realizing}. In addition, Ref.~\cite{bradlyn2016dirac} also list a number of other material candidates in these space groups.
+One of them, \ch{Bi_2PdO_4}, has been realized experimentally in \cite{2017candidate130}.\\
+
+We have added the following passage to more clearly describe why we focused on this case:\\
+
+\textit{
+``Space group $P4_2/mbc1^\prime$ (\# 135) is a particularly interesting case for two reasons.
+First, it allows, although it does not require, a different filling constraint in the interacting and non-interacting cases.
+As shown in Refs.~\cite{wieder2016double,bradlyn2016dirac}, all single-particle electronic states at the high-symmetry $A$ point of the BZ come in eightfold-degenerate multiplets in this space group, with linear double-Dirac dispersion away from this point. 
+This means that non-interacting band insulators in space group $P4_2/mbc1^\prime$ (\# 135) must have filling $\nu=8n$ electrons per unit cell~\cite{watanabe2016fillingenforced}. 
+With interactions, however, the situation is less clear: $P4_2/mbc1^\prime$ (\# 135) is one of a handful of space groups where the LSM bound of Ref.~\cite{watanabe2015filling} is less tight than the non-interacting filling bound, admitting the possibility of a gapped, symmetric, topologically trivial insulator in space group $P4_2/mbc1^\prime$ (\# 135) with $\nu=4$ electrons per unit cell in the presence of interactions. 
+Space group \sg135 is thus a candidate for a unique kind of symmetric, insulating ground state, which does not have a non-interacting analogue.\\
+Second, there are a number of experimental candidates for realizing such a material.
+Layered ternary borocarbide compounds are invariant under \sg135 and can have significant interactions strengths \cite{wiitkarborocarbide1994}.
+No model Hamiltonians, however, for nonmagnetic interacting insulators in this space group have been put forward."
+}
+
+
+\textbf{\textit{Question 3: Although the short-ranged interaction like Hubbard interaction is not treated in the present paper, it seems that adding this one may
+also reduce ground-state degeneracy and suppress the ferromagnetic
+instability.
+This fact cannot be answered by RG arguments and I wonder
+whether the present authors can provide non-perturbative results on
+this point, maybe the exact diagonalization on small size system?}}
+
+We agree that what happens to the degeneracy when Hubbard interactions are added to a HK model is an interesting question. Unfortunately, this breaks the exact solvability of the model. Since we demonstrate that it is possible to write down an exactly solvable HK-type model which does lift the degeneracy, we think the question is beyond the scope of the current work. It would however be an interesting direction to consider in the future.\\
+
+Qualitatively, we believe that there is strong numerical evidence in the existing literature that at half-filling, Hubbard interactions alone lead to magnetic ordering. 
+A classic exact diagonalization study on a 2D square lattice was carried out by \cite{White2dhubbardnumerics89}, who found an anti-ferromagnetic ground state. More recently, an exact diagonalization study \cite{mai2023topological} found that ferromagnetic ordering persisted in the Hubbard-Hofstader model. 
+In the case of spin-$1/2$ graphene with Hubbard interactions, this can also be shown analytically. 
+In this case, Lieb's theorem implies \cite{Liebtheorem89} that the many-body ground state will be two fold degenerate with total spin equal to zero for all positive values of the interaction strength. 
+This suggests that for strong Hubbard interactions, the ground state will lift the degeneracy.\\
+
+\indent We are unaware of any work that has considered the effect of both Hubbard and HK interactions on the degeneracy. 
+Since this would involve a competition between locality in position and momentum space, it would require different techniques to adequately address this interesting question and so we consider it a possible direction for future work.
+
+
+\textbf{\textit{Question 4: Can the HK-like models be realized in some real-life physical
+system, solid state system, cold atom or by superconducting qubits?}}
+
+This is a timely question given recent experimental progress in realizing ``momentum space lattices'' in cold atom systems. Since it preserves translational invariance, the HK model can be thought of as an on-site interaction on a lattice in momentum space. Recent work has shown that it is possible to form effective momentum space lattices from cold atom systems \cite{gadwaymsl21}. In principle, this is an ideal platform for realizing HK physics. We have added a passage to the manuscript to point this out:
+
+\textit{``Finally, since HK interactions preserve translational symmetry, they can in principle be realized experimentally in momentum space lattices. Recently there has been progress in realizing these lattices in cold atom systems~\cite{gadwaymsl21}"}\\
+
+
+\textbf{\textit{Question 5: Finally, the thermodynamics have not been studied in this work, the authors may perform some calculations on this issue or argue how the temperature-dependence of typical observable like specific heat and charge susceptibility.}}\\
+
+The general procedure for calculating the thermodynamics of HK models was given in \cite{2022PhilipHKsuperconductor}. 
+We applied this procedure in order to calculate the spin susceptibility of the Graphene orbital HK model in Sec.~II A2 of the revised manuscript.
+We calculated the spin susceptibility to illustrate the stability of the orbital HK model ground state to a Zeeman perturbation, and other thermodynamic quantities can be obtained in the same way. 
+There are a number of other references that provide thermodynamic quantities in HK models: in \cite{zhao2023updated}, the magnetic instability is derived from the partition function; and in \cite{zhao2023failure} the Hall conductivity is calculated from the single particle Green function.\\
+
+\indent We have added a note in the paper pointing out these references:
+\textit{``Other thermodynamic quantities can be calculated in a similar way, as was done for the band-HK model in Ref.~\cite{zhao2021determination} and for the Hall conductivity in Ref.~\cite{zhao2023failure}. A calculation of the magnetic instability from the partition function of a band-HK model was carried out in Ref.~\cite{zhao2023updated}."}
+% Ask about Philips paper - they seem to just calculate it from the partition function.
+
+
+
+\section{Referee 2}
+\textit{In the manuscript XF10795B, the authors extend the Hatsugai-Kohmoto
+(HK) models with long-range interactions to multi-band systems,
+referred to as the orbital HK models. 
+They find that the large ground state degeneracy of the origin band HK models can be lifted in the orbital HK models, resulting in several interesting ground state, including the Mott insulators, spin liquids, and non-Fermi liquids. They also demonstrate a system with a gapped, unique and symmetric ground state, which cannot be captured by the well-established LSM
+theory. Their results are interesting and may provide a new direction
+of investigating topological systems with long-range interactions. 
+I recommend the publication in PRB after addressing my comments below}.
+
+We thank the referee for their positive assessment of our work. Below we address their specific comments:
+
+\textbf{\textit{Question 1: Typos: In Eq (1) $U$ should be changed to $U_1$. There is a missing $U_1$ in Eq. (24).}}\\
+
+Thank you for pointing this out, we have fixed it in the revised manuscript.\\
+
+\textbf{\textit{Question 2: Zeros and poles in the Green’s functions are important analyses for the properties of the Hamiltonian. The authors should add an
+additional section explaining the consequences of (1) zeros forming a
+Luttinger surface, (2) discontinues zeros, (3) degenerate poles in the
+lower Hubbard bands, etc.}} \\
+
+Thank you for pointing this out, we have added the following note to the paper to explain the role these quantities play in our analysis:\\
+
+\indent \textit{ ``From the properties of the retarded real-time Green function matrix $G^{+}$ we can read off a number of important properties that help to characetize the nature of the ground state.
+Most importantly, the presence of a band of \textit{zero} eigenvalues of this matrix at every $\mathbf{k}$ point in the Brillouin zone, known as a Luttinger surface, signifies a divergence of the single-particle self-energy.
+This indicates that the effect of interactions is nonperturbatively large.  
+In turn, this implies that the system cannot be adiabatically connected to a trivial band insulator or Fermi liquid in the non-interacting limit. 
+This is the defining feature of a Mott insulator \cite{dave2013absence}.''}
+
+\indent\textit{``Conversely, \textit{poles} of $G^{+}$ correspond to single-particle charge excitations. 
+As pointed out in Ref.~\cite{setty2023symmetry}, both the degeneracies of the poles of $G^{+}$, and the degeneracies of the zeroes of $G^{+}$ are constrained by crystal symmetries at the high symmetry points; the zero eigenvectors of both $G^{+}$ (zeros) and of $[G^{+}]^{-1}$ (poles) transform in irreducible representations of the space group. 
+Here, we also observe the fact that zeroes and poles can be created and eliminated together.
+This is an important feature of the discontinuities in the single-particle Green function of the graphene band-HK model (Figure 3).''}\\
+
+\textbf{\textit{Question 3: Particle-hole symmetry is essential for the half-filled state. Can particle-hole symmetry be spontaneously broken? If it can happen, then each momentum k can be away from the half filling, and perhaps the ground state is a CDW in the momentum space.}}\\
+
+Although particle-hole symmetry is sufficient for the ground state of a half-filed HK model to consist of half-filling every $\mathbf{k}$ point, it is not necessary. 
+We argue in Sec. II A that particle-hole symmetry necessarily implies that the ground state consists of every $\mathbf{k}$ point being half-filled. Conversely, if particle-hole symmetry is broken, it is \textit{still} possible for the ground state to consist of half-filling every $\mathbf{k}$. 
+Whether this is true depends on the strength of the interaction. In Appendix D, ``Particle-hole symmetry of Generalized HK models'' we explicitly show that particle-hole symmetry \textit{is} broken in our models of $P4/ncc1'$ (\# 130) and $P4_2/mbc1'$ (\# 135). We then show that, for the parameters we consider, the ground state nevertheless still consists of every $\mathbf{k}$ point being half-filled. \\
+
+\indent In the manuscript, we show this in the case of graphene with orbital HK interactions. 
+We provide a range of values of $\mu$ for which the ground state remains unchanged, hence indicating that the ground state is robust to particle-hole symmetry breaking within a range. 
+Particle-hole symmetry breaking is hence not necessary for our ground state, but it is sufficient. 
+We have added a note to our discussion of the graphene model to clarify this point:\\
+\textit{``
+More generally, for the graphene Hamiltonian with orbital interactions $H_{g}$, so long as $\mu_0$ is in the range:
+\begin{equation}
+|tg(\mathbf{k})|-\sqrt{(\tfrac{U_1}{2})^2+4|tg(\mathbf{k})|^2}<\big|\mu_0-U_1/2\big|
+\end{equation}
+the ground state of $H_{g}$ will be at half-filling at every $\mathbf{k}$. 
+In this range, the ground state will be the tensor product of the ground states of the half-filled states at every $\mathbf{k}$ point. Since only $\mu_0=U_1/2$ is particle-hole symmetric, this illustrates that the ground state is robust to particle-hole symmetry breaking, within a range."}\\
+
+
+
+\textbf{\textit{Question 4: What is the meaning of the discontinuity of the single-particle bands in the Green’s function for the HK model as shown in Fig. 3 (a) as well as shown in Figs. 4 (e), 6 (a), 7 (e)?}}\\
+
+
+Physically, the discontinuity in the Green function indicates the transition from a state that cannot be adiabatically deformed to a band insulator - which has Green function zeros, to one that can - which does not have Green function zeros. This is particularly clear in the case of the two band-HK model that we consider for graphene, which has band dispersion $\pm\xi(\mathbf{k})$. When the dispersion $\xi(\mathbf{k})<U/2$ the half-filled ground state consists of one electron in the positive energy band and one in the negative. When $\xi(\mathbf{k})>U/2$ the ground state consists of both electrons in the negative band. The discontinuity in the Green function reflects the discontinuity in the ground state at this point.  Since the ground state wavefunction of, for example, the graphene orbital HK model without Zeeman interactions does not change discontinuously, there is no discontinuity in that Green function.  \\
+
+Mathematically, this follows from the fact that the Green function zeroes arise from the cancellation of contributions to the Green function. In the band-HK example, when $\xi(\mathbf{k})<U/2$ the Green function is given by:
+\begin{align}
+    G^{+}_{\pm,\sigma;\pm,\sigma}(\omega,\mathbf{k})&=\frac{1}{2}\bigg[\frac{1}{\omega-(\pm\xi(\mathbf{k})+U/2)+i\eta}\\ \nonumber+&\frac{1}{\omega-(\pm\xi(\mathbf{k})-U/2)+i\eta}\bigg],
+\end{align}
+Zeros occur when the two contributions to $G_{\pm,\sigma;\pm,\sigma}(\omega,\mathbf{k})$ cancel, which occurs when $\omega=\pm\xi(\mathbf{k})$.
+Once at a critical $\mathbf{k}$ where $\xi(\mathbf{k})$ equals and then exceeds $U_1$, the ground state of the band HK model changes discontinuously from having one electron in the lower and upper single particle bands at each $\mathbf{k}$ point, to having both electrons in the lower single particle band. In this regime, the diagonal elements of the Green function matrix become:
+\begin{align}
+    G^{+}_{\pm,\sigma;\pm,\sigma}=\frac{1}{\omega -(\pm\xi(\mathbf{k})-U/2)+i\eta}
+\end{align}
+This leads to the discontinuous disappearance of the upper and lower poles, along with the zeros in the Green function at $\xi(\mathbf{k})=U/2$. Notice that the zeros and poles are created and annihilated in pairs at the discontinuity.
+We have added the following clarification to the main text:\\
+
+\textit{``For the band HK model, the Green function only contains zeros at $\mathbf{k}$ points for which the eigenvalues of the non-interacting Hamiltonian are less than half the interaction energy $\xi(\mathbf{k})<U_1/2$. 
+In this regime, the retarded, real time Green function matrix is diagonal with elements given by:
+\begin{align}
+    G^{+}_{\pm,\sigma;\pm,\sigma}(\omega,\mathbf{k})&=\frac{1}{2}\bigg[\frac{1}{\omega-(\pm\xi(\mathbf{k})+UF/2)+i\eta}\\ \nonumber+&\frac{1}{\omega-(\pm\xi(\mathbf{k})-U_1/2)+i\eta}\bigg],
+\end{align}
+Where here we have used $\pm$ as the band index $m$, and $\xi(\mathbf{k})$ is defined as the positive non-interacting Hamiltonian eigenvalue. Zeros occur when the two contributions to $G_{\pm,\sigma;\pm,\sigma}(\omega,\mathbf{k})$ cancel, which occurs when $\omega=\pm\xi(\mathbf{k})$''}.
+
+\textit{``Once the single particle energy $|\xi(\mathbf{k})|$ exceeds the interaction energy $|U_{1}|$, the ground state of the band HK model changes discontinuously as a function of $\mathbf{k}$ from having one electron in the lower and upper single particle bands, to having both electrons in the lower single particle band. In this regime, the diagonal elements of the Green function matrix become:
+\begin{align}
+    G^{+}_{\pm,\sigma;\pm,\sigma}=\frac{1}{\omega -(\pm\xi(\mathbf{k})-U_1/2)+i\eta}
+\end{align}
+This leads to the discontinuous disappearance of the upper and lower poles, along with the zeros in the Green function at $\xi(\mathbf{k})=U_1/2$. 
+Notice that the zeros and poles are created and annihilated in pairs at the discontinuity.''}\\
+
+\textbf{\textit{Question 5: For the Hamiltonian 135, why is the ground state a spin liquid? Although the degeneracy at the A point indicates it is gapless, why is it a charge-neutral gapless state?}}\\
+
+We define a spin-liquid ground state as one which:
+\begin{enumerate}
+    \item Has a charge gap.
+    \item Has no magnetic order.
+\end{enumerate}
+The existence of a charge gap is established by the poles in the single particle Green function in Fig. 10(a) and 10(b). We can see that there is no magnetic order by considering, for example, the ground states at the $A$ and the $\Gamma$ points in the Brillouin zone, provided as an appendix to this reply and included in Appendix E of the revised manuscript. We also can see this on general grounds from the argument given in the response to the next question.\\
+
+
+\textbf{\textit{Question 6: Furthermore, since the spin Hamiltonian can be obtained by the Schrieffer-Wolff transformation, can the authors shown that there is no magnetic order from the spin Hamiltonian (Eqs: A7-A9).}}
+
+The ground state for each $\mathbf{k}$ point in the spin-Hamiltonian can be obtained in the same way as the ground state for the full Hamiltonian, which we provide as an appendix to this reply and included in Appendix E of the revised manuscript.
+From the ground state of the full Hamiltonian, we can see that there is no magnetic ordering. This can also be shown generally for any HK model. We have added a note in the manuscript to explain this point:
+
+\textit{`` We mention one more important general property of the ground state for \textit{any} HK model which preserves crystal and time reversal symmetries. On general grounds, the ground state of such a system, if it is non-degenerate, has no magnetic order. This follows from the fact that the ground state preserves the time-reversal symmetry of the Hamiltonian. 
+Although in principle it is possible that there is spontaneous symmetry breaking, this only happens in the thermodynamic limit. 
+Since the HK model is diagonal in momentum space we can consider the Hamiltonian formed from the $\mathbf{k}$ and $-\mathbf{k}$ blocks:
+\begin{equation}
+    H_{\Tilde{\mathbf{k}}}=H_{\mathbf{k}}\oplus H_{-\mathbf{k}}.
+\end{equation}
+This Hamiltonian is invariant under time-reversal, since time-reversal merely permutes the $\mathbf{k}$ and $-\mathbf{k}$ blocks. 
+Since this is a finite-rank Hamiltonian, it cannot spontaneously break a symmetry and hence it's ground state manifold must also be time-reversal symmetric. 
+The overall Hamiltonian for a HK model can be written as a direct sum of the $H_{\Tilde{\mathbf{k}}}$ Hamiltonians:
+\begin{equation}
+H=\bigoplus_{\mathbf{k}}H_{\mathbf{k}}=\bigoplus_{\mathbf{\tilde{k}\geq 0}}H_{\mathbf{\Tilde{k}}},
+\end{equation}
+and so the ground state is the tensor product of the necessarily time-reversal symmetric ground states of $H_{\Tilde{\mathbf{k}}}$, and so is itself time-reversal symmetric. This forbids magnetic ordering.  Hence, typical non-thermodynamically degenerate ground states of orbital-HK models have a single-particle charge gap with no magnetic order; this is what we will define as a \textit{spin liquid} ground state. The only way to have a magnetically ordered ground state in an HK model is then to have a thermodynamically large ground state degeneracy which is unstable to magnetic ordering, as in band-HK models."}\\
+
+This argument applies equally to the full Hamiltonian, and the Schrieffer-Wolff Hamiltonian.\\
+
+\textbf{\textit{Question 7: Can the authors explicitly write down the long-range entangled cat state for the Hamiltonian 130? Also, is this cat state present in the momentum space instead of the real space?}}\\
+
+We provide the ground states at the $\Gamma$ and $A$ points for both space groups \sg135 and \sgb as an appendix to this reply and included in Appendix E of the revised manuscript.\\
+
+\textbf{\textit{Question 8: Regarding the trivial case where the ground state is just a product state in the momentum space in the orbital HK model, the real space representation of the ground state is highly entangled. Can the authors comment on the real space ground state property?}}
+
+We agree that the real space ground state will be highly long-range entangled in real space. 
+As the referee points out, this follows from the fact that the many-body ground state is a product of momentum states.
+We have added a clarifying note in the manuscript to draw attention to this fact:
+
+\textit{
+``We also note that since the many body ground state is a product state in momentum space:
+\begin{equation}
+    \ket{GS}=\frac{1}{\sqrt{N}}\bigotimes_{\mathbf{k}}\ket{\mathbf{k}},
+\end{equation}
+the representation of the ground state in localized real space orbitals is given by
+\begin{equation}
+\ket{GS}=\frac{1}{\sqrt{N}}\bigotimes_{\mathbf{k}}\left(\sum_{\mathbf{R}}e^{i\mathbf{k}\cdot\mathbf{R}}\ket{\mathbf{R}}\right)
+\end{equation}
+Hence the ground state has a high degree of long-range entanglement in real space. This follows from the long range of the HK interaction.''
+}
+\appendix
+\clearpage
+
+\section{Ground states at $\Gamma$ and $A$ for \sg135 and \sgb}
+\label{sec:groundstates}
+We\cite{lsm2023} provide here for reference the ground states of the system at the $\Gamma$ and $A$ points for our interacting models of space group \sg135 and space group \sgb.
+\subsection{Space group \sg135}
+For the space group \sg135 Hamiltonian with all HK interactions considered in the text:
+\begin{equation}
+    H=H^{0}_{135}+H_{HK}^{1}+H_{HK}^{2}+H_{HK}^{3},
+\end{equation}
+the ground state at the $A$ point is given by:
+\begin{align}
+    \ket{GS}_{A}&=\alpha_{1}(\ket{AA\uparrow;AA\downarrow;BA\uparrow;BA\downarrow}+\ket{AB\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+    &+\alpha_{2}(\ket{AA\uparrow;AA\downarrow;BB\uparrow;BB\downarrow}+\ket{AB\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}) \nonumber \\
+    &+\alpha_{3}(\ket{AA\uparrow;AB\downarrow;BA\uparrow;BB\downarrow}+\ket{AA\downarrow;AB\uparrow;BA\downarrow;BB\uparrow}) \nonumber \\
+    &+\alpha_{4}(\ket{AA\uparrow;AB\downarrow;BA\downarrow;BB\uparrow}+\ket{AA\downarrow;AB\uparrow;BA\uparrow;BB\downarrow}) \nonumber
+\end{align}
+With
+\begin{align}
+    &\alpha_{1}=0.07774353109915988 \nonumber \\
+    &\alpha_{2}=0.12444952353294593 \nonumber\\
+    &\alpha_{3}=0.3117239903386059 \nonumber \\
+    &\alpha_{4}=0.6174920350191032 \nonumber.
+\end{align}
+The ground state at the $\Gamma$ point is given by:
+\begin{align}
+    &\alpha_{1}(\ket{AA\uparrow;AA\downarrow;AB\uparrow;AB\downarrow}+\ket{BA\uparrow;BA\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{2}\bigg[\ket{AA\uparrow;AA\downarrow;AB\uparrow;BB\downarrow}+\ket{AA\uparrow;BA\downarrow;BB\uparrow;BB\downarrow}\\
+&+\ket{AB\uparrow;BA\uparrow;BA\downarrow;BB\downarrow}+\ket{AA\uparrow;AB\uparrow;AB\downarrow;BA\downarrow} \nonumber \\
+&-\big[\ket{AA\uparrow;AA\downarrow;AB\downarrow;BB\uparrow}+\ket{AB\downarrow;BA\uparrow;BA\downarrow;BB\uparrow} \nonumber \\
+&+\ket{AA\downarrow;BA\uparrow;BB\uparrow;BB\downarrow}+\ket{AA\downarrow;AB\uparrow;AB\downarrow;BA\uparrow})\big]\bigg] \nonumber \\
+&\alpha_{3}(\ket{AB\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}+\ket{AA\uparrow;AA\downarrow;BA\uparrow;BA\downarrow}) \nonumber \\
+&\alpha_{4}\bigg[\big[(\ket{AA\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}+\ket{AA\uparrow;AA\downarrow;BA\uparrow;BB\downarrow} \nonumber \\
+&+\ket{AA\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}+\ket{AB\uparrow;AB\downarrow;BA\uparrow;BB\downarrow})\big] \nonumber \\
+&-\big[(\ket{AA\downarrow;AB\uparrow;BB\uparrow;BB\downarrow}+\ket{AB\uparrow;AB\downarrow;BA\downarrow;BB\uparrow} \nonumber \\&+\ket{AA\uparrow;AA\downarrow;BA\downarrow;BB\uparrow}+\ket{AA\downarrow;AB\uparrow;BA\uparrow;BA\downarrow})\big]\bigg] \\
+&\alpha_{5}(\ket{AB\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}+\ket{AA\uparrow;AA\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{6}(\ket{AA\uparrow;AB\uparrow;BA\downarrow;BB\downarrow}+\ket{AA\downarrow;AB\downarrow;BA\uparrow;BB\uparrow}) \nonumber \\
+&\alpha_{7}(\ket{AA\downarrow;AB\uparrow;BA\downarrow;BB\uparrow}+\ket{AA\uparrow;AB\downarrow;BA\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{8}(\ket{AA\downarrow;AB\uparrow;BA\uparrow;BB\downarrow}+\ket{AA\uparrow;AB\downarrow;BA\downarrow;BB\uparrow}) \nonumber 
+\end{align}
+\begin{align}
+&\alpha_{1}=-0.015244493568331597\nonumber \\
+&\alpha_{2}=0.08320294092507857\nonumber \\
+% &\alpha_{2}=-0.0832029409250787\nonumber \\
+&\alpha_{3}=-0.07514072175059767\nonumber \\
+% &\alpha_{4}=-0.0028154716666481715\nonumber \\
+&\alpha_{4}=0.002815471666648206\nonumber \\
+&\alpha_{5}=-0.14266271433303265\nonumber \\
+&\alpha_{6}=0.057070353250615435\nonumber \\
+&\alpha_{7}=-0.2813020658633854\nonumber \\
+&\alpha_{8}=-0.603040898093542\nonumber
+\end{align}
+
+\subsection{Space group \sgb}
+\label{sec:sg130}
+For the interacting Hamiltonian invariant under space group \sgb:
+\begin{equation}
+    H=H^{130}_{0}+H^{1}_{HK}+H^{2}_{HK}+H^{3}_{HK},
+\end{equation}
+the ground state at the $A$ point is given by:
+\begin{align}
+\ket{GS}_{A}=&\alpha_{1}(\ket{AA\uparrow;AA\downarrow;BA\uparrow;BA\downarrow}+\ket{AB\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{2}(\ket{AA\uparrow;AA\downarrow;BB\uparrow;BB\downarrow}+\ket{AB\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}) \nonumber \\
+&\alpha_{3}(\ket{AA\uparrow;AB\downarrow;BA\uparrow;BB\downarrow}+\ket{AA\downarrow;AB\uparrow;BA\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{4}(\ket{AA\uparrow;AB\downarrow;BA\downarrow;BB\uparrow}+\ket{AA\downarrow;AB\uparrow;BA\uparrow;BB\downarrow}) \nonumber
+\end{align}
+\begin{align}
+&\alpha_{1}=-0.07774353109915998\nonumber \\
+&\alpha_{2}=-0.1244495235329457\nonumber \\
+&\alpha_{3}=-0.31172399033860637\nonumber \\
+&\alpha_{4}=-0.6174920350191034\nonumber.
+\end{align}
+The ground state at the $\Gamma$ point is:
+\begin{align}
+\ket{GS}_{\Gamma}&=\alpha_{1}(\ket{AA\uparrow;AA\downarrow;AB\uparrow;AB\downarrow}+\ket{BA\uparrow;BA\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{2}(\ket{AA\uparrow;BA\uparrow;BA\downarrow;BB\downarrow}+\ket{AA\uparrow;AA\downarrow;AB\uparrow;BA\downarrow}+\nonumber \\& \ket{AA\uparrow;AA\downarrow;AB\downarrow;BA\uparrow}+\ket{AA\downarrow;BA\uparrow;BA\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{3}(\ket{AA\uparrow;AA\downarrow;AB\uparrow;BB\downarrow}+\ket{AB\uparrow;BA\uparrow;BA\downarrow;BB\downarrow}) \nonumber \\
+&\alpha_{4}(\ket{AB\downarrow;BA\uparrow;BA\downarrow;BB\uparrow}+\ket{AA\uparrow;AA\downarrow;AB\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{5}(\ket{AA\uparrow;AA\downarrow;BA\uparrow;BA\downarrow}+\ket{AB\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{6}(\ket{AB\uparrow;AB\downarrow;BA\uparrow;BB\downarrow}+\ket{AA\uparrow;AA\downarrow;BA\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{7}(\ket{AB\uparrow;AB\downarrow;BA\downarrow;BB\uparrow}+\ket{AA\uparrow;AA\downarrow;BA\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{8}(\ket{AA\uparrow;AA\downarrow;BB\uparrow;BB\downarrow}+\ket{AB\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}) \nonumber \\
+&\alpha_{9}(\ket{AA\uparrow;AB\uparrow;AB\downarrow;BA\downarrow}+\ket{AA\uparrow;BA\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{10}(\ket{AB\uparrow;BA\downarrow;BB\uparrow;BB\downarrow}+\ket{AA\uparrow;AB\uparrow;AB\downarrow;BB\downarrow}\nonumber \\&+\ket{AA\downarrow;AB\uparrow;AB\downarrow;BB\uparrow}+\ket{AB\downarrow;BA\uparrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{11}(\ket{AA\downarrow;AB\downarrow;BA\uparrow;BB\uparrow}+\ket{AA\uparrow;AB\uparrow;BA\downarrow;BB\downarrow}) \nonumber \\
+&\alpha_{12}(\ket{AA\uparrow;AB\downarrow;BA\uparrow;BA\downarrow}+\ket{AA\uparrow;AB\downarrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{13}(\ket{AA\uparrow;AB\downarrow;BA\uparrow;BB\downarrow}+\ket{AA\downarrow;AB\uparrow;BA\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{14}(\ket{AA\uparrow;AB\downarrow;BA\downarrow;BB\uparrow}) \nonumber \\
+&\alpha_{15}(\ket{AA\downarrow;AB\uparrow;AB\downarrow;BA\uparrow}+\ket{AA\downarrow;BA\uparrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{16}(\ket{AA\downarrow;AB\uparrow;BA\uparrow;BA\downarrow}+\ket{AA\downarrow;AB\uparrow;BB\uparrow;BB\downarrow}) \nonumber \\
+&\alpha_{17}(\ket{AA\downarrow;AB\uparrow;BA\uparrow;BB\downarrow}) \nonumber \\
+\end{align}
+\begin{align}
+&\alpha_{1}=0.014249658673534686\nonumber \\
+&\alpha_{2}=-0.0012444934053119539 i\nonumber \\
+&\alpha_{3}=-0.0831672982330461+0.008862561108818907i\nonumber \\
+&\alpha_{4}=0.0831672982330454+0.008862561108818754i\nonumber \\
+&\alpha_{5}=0.07544667047624203\nonumber \\
+&\alpha_{6}=0.0028493813995047884+0.000858765428111011i\nonumber \\
+&\alpha_{7}=-0.002849381399504752+0.0008587654281110387i\nonumber \\
+&\alpha_{8}=0.14149493379607864\nonumber \\
+&\alpha_{9}=-0.08316729823304608-0.0088625611088189i\nonumber \\
+&\alpha_{10}=0.0012444934053119391i\nonumber \\
+&\alpha_{11}=-0.05320252170928138\nonumber \\
+&\alpha_{12}=0.0028493813995046618-0.0008587654281109971i\nonumber \\
+&\alpha_{13}=0.2816876681657167\nonumber \\
+&\alpha_{14}=0.6031003841472453-0.012345362536891847i\nonumber \\
+&\alpha_{15}=0.08316729823304603-0.008862561108818893i\nonumber \\
+&\alpha_{16}=-0.002849381399504741-0.0008587654281110387i\nonumber \\
+&\alpha_{17}=0.6031003841472453+0.012345362536891696i\nonumber \\
+\end{align}
+
+\pagebreak
+\bibliographystyle{unsrt}
+\addcontentsline{toc}{section}{Bibliography}
+\bibliography{refs}
+% \bibliography{references}
+
+
+\end{document}
