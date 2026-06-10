@@ -58,8 +58,10 @@ def _resid_jax(p, U):
     r = jax.grad(e_total, argnums=0)(p, ZERO_C8, U, kx, ky, kz)
     wmin = min_boson_eig(p, U, kx, ky, kz)
     pen = 50.0 * jnp.clip(-wmin, 0.0)
-    # mu_L is a flat direction without condensates at x=0; pin via tiny tether
-    return jnp.concatenate([r, jnp.array([pen]), 1e-3 * p[jnp.array([17])]])
+    # mu_L is energy-flat without condensates at x=0, but the boson para-spectrum
+    # splits as +-(U/2 - mu_L): stability requires mu_L ~ U/2 (KMH closed forms
+    # implicitly sit there). Tether to U/2, not 0.
+    return jnp.concatenate([r, jnp.array([pen]), 1e-3 * jnp.array([p[17] - U / 2.0])])
 
 
 _resid_jit = jax.jit(_resid_jax)
@@ -155,6 +157,7 @@ def seed_bank(U):
     rng = np.random.default_rng(42)
     base = np.zeros(18)
     base[16] = -0.5
+    base[17] = U / 2.0
     # SL-like: pairing in all channels
     s = base.copy(); s[8:12] = [0.5, 0.4, 0.15, 0.15]; s[12:16] = [0.35, 0.3, 0.1, 0.1]
     seeds.append(s)
