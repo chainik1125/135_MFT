@@ -185,3 +185,33 @@ sign pattern itself is gauge, the flux is not).
 The chargon Hamiltonian at this point is diagonal-plus-pairing with
 ξ_b = diag(μ_L−λ, U−λ−μ_L) ⊗ 𝟙₄ + staggered/uniform pairing blocks, gapped
 with excitation gap 0.343 t_xy and no condensate.
+
+---
+
+## 5. What "pi-flux twist" means
+
+The staggered sign s_tau on the z-bonds is itself gauge: spinons carry an
+emergent gauge charge, so f_i -> eps_i f_i (eps_i = +-1, site-dependent)
+multiplies every bond amplitude by eps_i eps_j, moving the minus signs around
+(this is why the pure staggered-z and uniform-z states are exactly
+degenerate - same state, two gauges). The gauge-invariant content is the
+product of bond signs around closed loops. For the minimal loop using both
+channels,
+
+(0,0,0) -z-> (0,0,1/2) -xy-> (1/2,1/2,1/2) -z-> (1/2,1/2,0) -xy-> (0,0,0),
+
+the signs multiply to (+)(+)(-)(+) = -1 = e^{i pi}: every such mixed z-xy
+plaquette encloses pi flux of the emergent Z2 gauge field. No gauge
+transformation removes it (the analogue of square-lattice pi-flux ansatze in
+PSG classifications). It is internal flux seen only by the partons - no
+physical magnetic field, no broken symmetry; all gauge-invariant observables
+are fully symmetric (verified).
+
+"Twist": because of the flux, C2x and the glides map the sign pattern to a
+gauge-shuffled copy; invariance holds only as (symmetry o gauge
+transformation) with the compensating sign-per-z-layer gauge G = mu_z - a
+nontrivial projective symmetry group (PSG) realization. Energetic payoff: in
+k-space the stagger turns the z-channel matrix mu^x into mu^x tau^z, which
+anticommutes with the xy channel's tau^x, so the two pairing gaps add in
+quadrature with zero interference - the mechanism that gaps both nodal
+planes.
