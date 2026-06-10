@@ -216,10 +216,12 @@ vanishes by U = 1.0, exactly where the gapped π-flux branch appears and wins.
 - One flux pattern was explored; the systematic PSG enumeration (including
   the chargon-C₂z = −1 class with its forced-nematic condensation signature)
   is open, as is the SG130 control where the LSM window is absent.
-- The novelty claim (first mean-field realization of the SG135
-  interacting-enabled insulator with a plain Hubbard interaction) rests on
-  the literature agent's sweep (`notes/literature_review.md`); a citation
-  sweep of arXiv:1811.11182 and 2309.15118 is the recommended hardening.
+- Novelty: the literature agent's sweep (`notes/literature_review.md`) plus a
+  closing web sweep found no prior parton mean-field realization of the SG135
+  (or any WPVZ-window) interaction-enabled insulator; the nearest relatives
+  are the Hatsugai–Kohmoto construction (arXiv:2306.00221) and the
+  Shastry–Sutherland nonsymmorphic study (arXiv:1810.01451). A full citation
+  walk of arXiv:1811.11182 / 2309.15118 remains the gold-standard check.
 
 ## Research process
 
