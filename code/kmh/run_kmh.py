@@ -17,8 +17,8 @@ k1, k2 = make_kgrid(int(sys.argv[1]) if len(sys.argv) > 1 else 120)
 log = lambda *a: (print(f"[{time.time()-t0:7.1f}s]", *a), sys.stdout.flush())
 
 
-def ground_state(U, lso):
-    sols = solve_point(U, lso, k1, k2)
+def ground_state(U, lso, extra_seeds=()):
+    sols = solve_point(U, lso, k1, k2, extra_seeds=extra_seeds)
     dm = solve_dimer(U)
     cands = [(s["E"], classify(s["p"]), s) for s in sols]
     if dm is not None:
@@ -27,6 +27,30 @@ def ground_state(U, lso):
         return None
     cands.sort(key=lambda c: c[0])
     return cands
+
+
+def phase_at(U, lso, extra_seeds=()):
+    cs = ground_state(U, lso, extra_seeds)
+    if cs is None:
+        return "none", None
+    return cs[0][1], cs
+
+
+def bisect_boundary(U_lo, U_hi, lso, ph_lo, tol=2e-3, seeds_lo=(), seeds_hi=()):
+    """Bisect the ground-state phase change between U_lo (phase ph_lo) and U_hi."""
+    lo, hi = U_lo, U_hi
+    while hi - lo > tol:
+        mid = 0.5 * (lo + hi)
+        ph, cs = phase_at(mid, lso, tuple(seeds_lo) + tuple(seeds_hi))
+        if ph == ph_lo:
+            lo = mid
+            if cs:
+                seeds_lo = [c[2]["p"] for c in cs if "p" in c[2]][:2]
+        else:
+            hi = mid
+            if cs:
+                seeds_hi = [c[2]["p"] for c in cs if "p" in c[2]][:2]
+    return 0.5 * (lo + hi)
 
 
 if __name__ == "__main__":
@@ -52,32 +76,39 @@ if __name__ == "__main__":
     else:
         log(f"   ground state DM E={E:+.6f}")
 
-    # ---------- V3: scan U at lso=0 ----------
+    # ---------- V3: scan U at lso=0 with continuation, then bisect ----------
     log("V3: U scan at lso=0")
-    rows = []
+    rows, prev = [], ()
     for U in np.arange(1.0, 2.4001, 0.05):
-        cs = ground_state(U, 0.0)
+        cs = ground_state(U, 0.0, extra_seeds=prev)
         E, ph, s = cs[0]
-        rows.append((U, ph, E))
+        rows.append((U, ph, E, cs))
+        prev = tuple(c[2]["p"] for c in cs if "p" in c[2])[:3]
         log(f"   U={U:.2f}  {ph:8s} E={E:+.6f}")
-    trans = [(rows[i][0], rows[i][1], rows[i+1][1]) for i in range(len(rows)-1)
-             if rows[i][1] != rows[i+1][1]]
-    log("   transitions:", trans, "(paper: SC->SL ~1.5, SL->DM ~1.9)")
+    for i in range(len(rows) - 1):
+        if rows[i][1] != rows[i+1][1]:
+            Uc = bisect_boundary(rows[i][0], rows[i+1][0], 0.0, rows[i][1],
+                                 seeds_lo=[c[2]["p"] for c in rows[i][3] if "p" in c[2]][:2],
+                                 seeds_hi=[c[2]["p"] for c in rows[i+1][3] if "p" in c[2]][:2])
+            log(f"   BOUNDARY {rows[i][1]}->{rows[i+1][1]} at U_c = {Uc:.3f}"
+                f"  (paper: SC->SL 1.5, SL->DM 1.9)")
 
     if len(sys.argv) > 2 and sys.argv[2] == "sweep":
         log("FULL SWEEP")
-        Us = np.arange(0.2, 3.001, 0.025)
+        Us = np.arange(0.2, 3.001, 0.05)
         lsos = np.arange(0.0, 0.3001, 0.02)
         phase = np.empty((len(lsos), len(Us)), dtype=object)
         energy = np.full((len(lsos), len(Us)), np.nan)
         for i, lso in enumerate(lsos):
+            prev = ()
             for j, U in enumerate(Us):
-                cs = ground_state(U, lso)
+                cs = ground_state(U, lso, extra_seeds=prev)
                 if cs is None:
                     phase[i, j] = "none"
                     continue
                 E, ph, s = cs[0]
                 phase[i, j], energy[i, j] = ph, E
+                prev = tuple(c[2]["p"] for c in cs if "p" in c[2])[:3]
             log(f"  lso={lso:.2f} done: " + "".join({"SC":"S","SL":"L","DM":"D","trivial":".","none":"?"}[p] for p in phase[i]))
         np.savez("kmh_sweep.npz", Us=Us, lsos=lsos,
                  phase=np.vectorize({"SC":0,"SL":1,"DM":2,"trivial":3,"none":4}.get)(phase),

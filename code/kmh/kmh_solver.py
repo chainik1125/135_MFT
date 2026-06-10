@@ -123,21 +123,67 @@ SEEDS = {
 }
 
 
-def solve_point(U, lso, k1, k2, seeds=None, tol=1e-9):
-    """Try all seeds; return list of converged distinct solutions with energies."""
+def solve_point(U, lso, k1, k2, seeds=None, extra_seeds=(), rtol=1e-6):
+    """Try all seeds (canonical + continuation extras); return converged solutions."""
     out = []
-    for name, s0 in (seeds or SEEDS).items():
+    cands = list((seeds or SEEDS).items()) + [(f"cont{i}", s) for i, s in enumerate(extra_seeds)]
+    for name, s0 in cands:
+        s0 = np.array(s0, float)
+        if lso == 0.0:
+            s0[4:8] = 0.0
         try:
-            sol = least_squares(residuals, np.array(s0, float), args=(U, lso, k1, k2),
+            sol = least_squares(residuals, s0, args=(U, lso, k1, k2),
                                 method="trf", xtol=1e-14, ftol=1e-14, gtol=1e-14,
                                 max_nfev=400)
         except Exception:
             continue
         rn = np.linalg.norm(sol.fun)
-        if rn < 1e-6:
+        if rn < rtol:
             p = sol.x
+            if lso == 0.0:
+                p[4:8] = 0.0  # primed OPs decouple at lso=0
             E = float(e_total(jnp.asarray(p), U, lso, k1, k2))
             out.append({"seed": name, "p": p, "E": E, "rnorm": rn})
+    out.extend(solve_sc(U, lso, k1, k2, rtol=rtol))
+    return out
+
+
+def _sc_embed(v, U, sgn=1.0):
+    """Reduced SC manifold (half filling): v = [Db, Df, Dbp, Dfp, h, d, lam];
+    mu = U/2, hA=-hB=h, dA=-dB=d (paper symmetry for the condensed phase)."""
+    Db, Df, Dbp, Dfp, h, d, lam = v
+    return jnp.array([0.0, 0.0, Db, Df, 0.0, 0.0, Dbp, Dfp,
+                      h, -h, sgn * d, -sgn * d, lam, U / 2.0])
+
+
+def solve_sc(U, lso, k1, k2, rtol=1e-6):
+    """SC solutions: solve the FULL stationarity residuals over the reduced
+    condensed manifold. lam seed sits at the k=0 BEC condition."""
+    out = []
+    for Df0 in (0.45, 0.25):
+        for sgn in (1.0, -1.0):
+            lam0 = U / 2.0 - 3.0 * Df0  # gap-closing seed (t=1)
+            v0 = np.array([0.5, Df0, 0.05 * (lso > 0), 0.05 * (lso > 0), 0.45, 0.45, lam0])
+
+            def res(v):
+                p = _sc_embed(jnp.asarray(v), U, sgn)
+                r = grad_e(p, U, lso, k1, k2, 0.0)
+                pen = 10.0 * domain_penalty(p, U, lso, k1, k2)
+                r = np.concatenate([np.asarray(r), np.asarray(pen)])
+                if lso == 0.0:
+                    r = np.concatenate([r, 5.0 * np.asarray(v[[2, 3]])])
+                return r
+
+            try:
+                sol = least_squares(res, v0, method="trf", xtol=1e-14, ftol=1e-14,
+                                    gtol=1e-14, max_nfev=500)
+            except Exception:
+                continue
+            rn = np.linalg.norm(sol.fun)
+            if rn < rtol and min(abs(sol.x[4]), abs(sol.x[5])) > 1e-3:
+                p = np.asarray(_sc_embed(jnp.asarray(sol.x), U, sgn))
+                E = float(e_total(jnp.asarray(p), U, lso, k1, k2))
+                out.append({"seed": f"SCred{sgn:+.0f}", "p": p, "E": E, "rnorm": rn})
     return out
 
 
