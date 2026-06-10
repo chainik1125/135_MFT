@@ -79,9 +79,9 @@ could not solve.
 6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`):
    the π-flux state beats every symmetric competitor found at every
    U ∈ [1.0, 6.0] (margin 7–8% of |E|); at U = 1: −0.2371 vs −0.2202 (nodal
-   z), −0.186 (nodal xy), −0.194 (uniform-mixed saddle); χ-type (spinon
-   Fermi-sea) states have no stationary point. The z-dimer VBS
-   (translation-breaking) lies at −0.262.
+   z), −0.186 (nodal xy), −0.194 (uniform-mixed saddle); no χ-type (spinon
+   Fermi-sea) stationary point was found — hopping-seeded solves collapse to
+   χ = 0. The z-dimer VBS (translation-breaking) lies at −0.262.
 
 **What we do *not* claim.** (i) WPVZ leaves open whether a symmetric
 *short-range-entangled* insulator is possible at ν = 4 in SG135; our state is
