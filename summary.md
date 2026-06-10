@@ -79,7 +79,8 @@ could not solve.
 6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`;
    "classII" in file names is historical — see §4 for the correct PSG label):
    the π-flux state beats every symmetric competitor found at every
-   U ∈ [1.0, 6.0] (margin 7–8% of |E|); at U = 1: −0.2371 vs −0.2202 (nodal
+   U ∈ [0.85, 6.0] (margin 7–8% of |E|; transition region in
+   `transition_nk12.npy`); at U = 1: −0.2371 vs −0.2202 (nodal
    z), −0.186 (nodal xy), −0.194 (uniform-mixed saddle); no χ-type (spinon
    Fermi-sea) stationary point was found — hopping-seeded solves collapse to
    χ = 0. The z-dimer VBS (translation-breaking) lies at −0.262.
