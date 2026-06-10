@@ -28,8 +28,8 @@ could not solve.
   plane. ![nodal](figures/sg135_bands_znodal_U4.png)
 - A **π-flux (PSG-twisted) ansatz** — staggered z-bonds, whose matrix
   structure anticommutes with the xy channel — gaps everything: pairing gaps
-  add in quadrature. It is the **lowest symmetric state for all U ≳ 1**.
-  ![ladder](figures/sg135_state_ladder.png)
+  add in quadrature. It is the **lowest symmetric state for all U above
+  U* ≈ 0.85**. ![ladder](figures/sg135_state_ladder.png)
 - This state is **fully gapped, uncondensed, and space-group symmetric**
   (verified generator-by-generator at machine precision, both matter sectors,
   with its Z₂ gauge structure resolved); it realizes the topologically
@@ -204,12 +204,12 @@ Below U* the chargon condenses and a superconducting solution with *uniform*
 mixed-channel pairing takes over (the staggered channel stays zero once the
 condensate forms — checked by the combined staggered+condensate solve). The
 transition is **first-order at U* ∈ (0.80, 0.85)**, with both branches
-computed on both sides: at U = 0.80 the SC wins (−0.3114 vs the π-flux
-state's −0.3058); at U = 0.85 the π-flux state already wins (−0.2854 vs
-−0.2724); below U ≈ 0.8 the π-flux branch terminates (its chargon gap
-closes) and above U ≈ 1.0 the SC condensate amplitude vanishes. (A second
-red-team round caught an earlier mis-pin of this crossing that compared the
-SC against the wrong branch.)
+computed on both sides at nk = 12 (`code/sg135/transition_nk12.npy`): at
+U = 0.80 the SC wins (−0.3114 vs the π-flux state's −0.3056); at U = 0.85
+the π-flux state already wins (−0.2852 vs −0.2724); below U ≈ 0.8 the π-flux
+branch terminates (its chargon gap closes) and above U ≈ 1.0 the SC
+condensate amplitude vanishes. (A second red-team round caught an earlier
+mis-pin of this crossing that compared the SC against the wrong branch.)
 
 ## §6 Limitations and next steps
 

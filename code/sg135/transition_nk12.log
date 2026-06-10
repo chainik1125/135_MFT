@@ -1,2 +1,7 @@
 U=0.6: gapped=nan SC=-0.50292
 U=0.7: gapped=nan SC=-0.40109
+U=0.8: gapped=-0.30556 SC=-0.31144
+U=0.85: gapped=-0.28518 SC=-0.27243
+U=0.9: gapped=-0.26720 SC=-0.23845
+U=0.95: gapped=-0.25127 SC=-0.21115
+saved
