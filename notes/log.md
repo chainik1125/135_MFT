@@ -25,3 +25,7 @@
 
 ## Hourly log
 - **21:27** Sprint start. RunPod verified. Repo inventoried. Beginning source reading (KMH appendix first).
+- **21:45** Read KMH paper (full appendix) + June write-up (all of §4/§5). Diagnosis of June blocker: tried closed-form spectra for the full SG135 kernels; fix = numerical diagonalization (eigh for fermions, Colpa for bosons) + autodiff stationarity.
+- **21:50** KMH solver written (code/kmh/): energies transcribed, residuals via jax.grad (avoids hand-transcribing the 13 appendix equations). DM phase = decoupled-dimer limit. Pod 11mcy7pb34iiu2 (L4, $0.39/h) provisioned.
+- **21:55** Private repo chainik1125/135_MFT created + pushed (user request).
+- **22:00** Lit-search agent returned: factorization question appears NOVEL (see notes/literature_review.md). KMH arXiv ID corrected: 1107.0007. SL sliver is known MFT artifact (QMC kills it) - caveat for write-up. 2D wallpaper-group enumeration agent launched (running).
