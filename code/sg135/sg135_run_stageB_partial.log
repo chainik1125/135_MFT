@@ -1,0 +1,39 @@
+E0610 06:23:21.682672   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 33.32GiB (35781083136 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.683361   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 29.99GiB (32202973184 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.684116   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 26.99GiB (28982675456 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.684958   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 24.29GiB (26084407296 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.685764   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 21.86GiB (23475965952 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.686582   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 19.68GiB (21128368128 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.687387   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 17.71GiB (19015530496 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.688183   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 15.94GiB (17113976832 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.688999   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 14.34GiB (15402578944 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.689795   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 12.91GiB (13862321152 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+E0610 06:23:21.690613   10771 cuda_executor.cc:1273] [0] Failed to allocate device memory: INTERNAL: [0] Failed to allocate 11.62GiB (12476088320 bytes) of device memory: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+[    0.1s] A1 band check (chi_b=1, Delta=0, lam=0); 8 Nambu-doubled levels per k:
+[    2.8s]   G: levels {np.float64(-1.5): np.int64(4), np.float64(-0.5): np.int64(4), np.float64(0.5): np.int64(4), np.float64(1.5): np.int64(4)}
+[    3.0s]   X: levels {np.float64(-0.781025): np.int64(8), np.float64(0.781025): np.int64(8)}
+[    3.0s]   M: levels {np.float64(-0.583095): np.int64(8), np.float64(0.583095): np.int64(8)}
+[    3.1s]   Z: levels {np.float64(-1.0): np.int64(8), np.float64(1.0): np.int64(8)}
+[    3.1s]   R: levels {np.float64(-0.6): np.int64(8), np.float64(0.6): np.int64(8)}
+[    3.1s]   A: levels {np.float64(0.0): np.int64(16)}
+[    3.1s]   expect at A: one 16-fold (8-fold double Dirac x Nambu doubling) at E=0
+[    9.6s] A2 atomic limit E_g(all zero, U=2.0) = 1.16e-07 (expect 0)
+[    9.6s] Stage B: uncondensed U sweep, nk=14
+[  343.6s] U=6.0: E=-0.03399 wminHb=+2.6831 rn=1.0e-10 Db=[-0.     0.053 -0.     0.   ] Df=[-0.     0.638 -0.    -0.   ] chib=[ 0.  0. -0. -0.] chif=[-0.  0. -0. -0.] lam=-0.000
+[  404.5s] U=5.8: E=-0.03516 wminHb=+2.5831 rn=1.1e-10 Db=[ 0.     0.055  0.    -0.   ] Df=[-0.     0.638  0.    -0.   ] chib=[-0. -0.  0. -0.] chif=[-0.  0.  0. -0.] lam=-0.000
+[ 1050.6s] U=5.6: E=-0.03643 wminHb=+2.4831 rn=1.2e-10 Db=[-0.    -0.057 -0.     0.   ] Df=[ 0.    -0.638 -0.    -0.   ] chib=[-0. -0.  0. -0.] chif=[-0.  0. -0.  0.] lam=-0.000
+[ 1558.8s] U=5.4: E=-0.03778 wminHb=+2.3831 rn=1.4e-10 Db=[0.    0.059 0.    0.   ] Df=[-0.     0.638  0.    -0.   ] chib=[ 0.  0.  0. -0.] chif=[-0.  0.  0.  0.] lam=-0.000
+[ 1879.4s] U=5.2: E=-0.03924 wminHb=+2.2831 rn=1.6e-10 Db=[ 0.     0.062 -0.    -0.   ] Df=[-0.     0.638 -0.    -0.   ] chib=[ 0.  0. -0.  0.] chif=[ 0. -0.  0.  0.] lam=-0.000
+[ 2196.4s] U=5.0: E=-0.04082 wminHb=+2.1831 rn=1.7e-10 Db=[-0.     0.064 -0.     0.   ] Df=[0.    0.638 0.    0.   ] chib=[-0.  0. -0. -0.] chif=[-0. -0. -0.  0.] lam=-0.000
+[ 2498.3s] U=4.8: E=-0.04254 wminHb=+2.0831 rn=2.0e-10 Db=[-0.     0.067  0.     0.   ] Df=[0.    0.638 0.    0.   ] chib=[-0. -0. -0.  0.] chif=[-0.  0. -0.  0.] lam=-0.000
+[ 2780.1s] U=4.6: E=-0.04440 wminHb=+1.9831 rn=2.2e-10 Db=[ 0.    0.07  0.   -0.  ] Df=[-0.     0.638  0.    -0.   ] chib=[-0. -0.  0. -0.] chif=[-0.  0. -0.  0.] lam=-0.000
+[ 3085.5s] U=4.4: E=-0.04643 wminHb=+1.8831 rn=2.6e-10 Db=[ 0.    -0.073 -0.     0.   ] Df=[ 0.    -0.638 -0.    -0.   ] chib=[-0. -0. -0.  0.] chif=[ 0. -0.  0. -0.] lam=-0.000
+[ 3654.4s] U=4.2: E=-0.04866 wminHb=+1.7831 rn=3.0e-10 Db=[ 0.     0.077  0.    -0.   ] Df=[0.    0.638 0.    0.   ] chib=[-0. -0.  0.  0.] chif=[ 0. -0. -0. -0.] lam=-0.000
+[ 4242.7s] U=4.0: E=-0.05112 wminHb=+1.6831 rn=3.4e-10 Db=[ 0.     0.081 -0.     0.   ] Df=[-0.     0.638 -0.    -0.   ] chib=[ 0. -0.  0. -0.] chif=[-0. -0. -0.  0.] lam=-0.000
+[ 4537.3s] U=3.8: E=-0.05384 wminHb=+1.5831 rn=4.0e-10 Db=[-0.     0.085 -0.     0.   ] Df=[ 0.     0.638 -0.    -0.   ] chib=[-0. -0. -0.  0.] chif=[-0. -0.  0.  0.] lam=-0.000
+[ 5109.1s] U=3.6: E=-0.05686 wminHb=+1.4832 rn=4.7e-10 Db=[ 0.    0.09  0.   -0.  ] Df=[-0.     0.638  0.     0.   ] chib=[-0. -0. -0. -0.] chif=[-0.  0.  0.  0.] lam=-0.000
+[ 5428.6s] U=3.4: E=-0.06025 wminHb=+1.3832 rn=5.6e-10 Db=[-0.     0.095  0.    -0.   ] Df=[-0.     0.638  0.    -0.   ] chib=[ 0.  0. -0.  0.] chif=[ 0. -0. -0.  0.] lam=-0.000
+[ 5471.0s] U=3.2: E=-0.06407 wminHb=+1.2832 rn=6.7e-10 Db=[ 0.     0.101 -0.    -0.   ] Df=[-0.     0.638 -0.     0.   ] chib=[0. 0. 0. 0.] chif=[ 0. -0. -0.  0.] lam=-0.000
+[ 5868.2s] U=3.0: E=-0.06841 wminHb=+1.1833 rn=8.2e-10 Db=[ 0.     0.108  0.    -0.   ] Df=[-0.     0.638  0.    -0.   ] chib=[0. 0. 0. 0.] chif=[ 0. -0.  0. -0.] lam=-0.000
+[ 5913.5s] U=2.8: E=-0.07339 wminHb=+1.0833 rn=1.0e-09 Db=[-0.     0.116 -0.     0.   ] Df=[-0.     0.638 -0.     0.   ] chib=[0. 0. 0. 0.] chif=[-0. -0. -0. -0.] lam=-0.000
+[ 5949.0s] U=2.6: E=-0.07916 wminHb=+0.9834 rn=1.3e-09 Db=[ 0.     0.126 -0.    -0.   ] Df=[ 0.     0.638 -0.    -0.   ] chib=[0. 0. 0. 0.] chif=[-0.  0. -0. -0.] lam=-0.000

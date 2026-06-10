@@ -161,7 +161,59 @@ def gap_audit(p, U, nk=20):
     return float(fgap), float(fgapA), float(np.min(np.asarray(wmin)))
 
 
+def check_boson_symmetries(p, U, seed=0, nrand=12):
+    """Same PSG check for the chargon (boson) kernel: xi transforms with
+    U H U^+; the pairing block (zeta=+1) with U D U^T."""
+    from sg135_solver import boson_blocks as bb
+    rng = np.random.default_rng(seed)
+    ks = list(HSP.values()) + [rng.uniform(-np.pi, np.pi, 3) for _ in range(nrand)]
+    out = {}
+    for name, (U8, W) in GENS.items():
+        best = (np.inf, None)
+        for gname, G in GAUGE_CANDS.items():
+            UG = G @ U8
+            worst = 0.0
+            for k in ks:
+                k = np.asarray(k, float)
+                kx, ky, kz = (jnp.array([k[0]]), jnp.array([k[1]]), jnp.array([k[2]]))
+                xi, dl = bb(jnp.asarray(p), U, kx, ky, kz, TS_DEFAULT)
+                kW = W @ k
+                kxw, kyw, kzw = (jnp.array([kW[0]]), jnp.array([kW[1]]), jnp.array([kW[2]]))
+                xiW, dlW = bb(jnp.asarray(p), U, kxw, kyw, kzw, TS_DEFAULT)
+                worst = max(worst,
+                            np.abs(UG @ np.asarray(xi[0]) @ UG.conj().T - np.asarray(xiW[0])).max(),
+                            np.abs(UG @ np.asarray(dl[0]) @ UG.T - np.asarray(dlW[0])).max())
+            if worst < best[0]:
+                best = (worst, gname)
+        out[name] = best
+    return out
+
+
+def hessian_audit(p, U, nk=8):
+    """Min eigenvalue of the Hessian of E_g in the order-parameter subspace
+    (multiplier directions excluded: constrained stationarity is a saddle in
+    lam/mu by construction). Negative => not even a local minimum."""
+    import jax
+    from sg135_solver import make_kgrid as mkg, e_total
+    kx, ky, kz = mkg(nk)
+    op_idx = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21])
+
+    def grad_ops(v):
+        q = jnp.asarray(p).at[jnp.asarray(op_idx)].set(v)
+        g = jax.grad(e_total, argnums=0)(q, jnp.zeros(8), U, kx, ky, kz)
+        return g[jnp.asarray(op_idx)]
+
+    H = np.asarray(jax.jacfwd(grad_ops)(jnp.asarray(p)[jnp.asarray(op_idx)]))
+    H = np.nan_to_num(0.5 * (H + H.T), nan=0.0)
+    ev = np.linalg.eigvalsh(H)
+    return ev
+
+
 if __name__ == "__main__":
+    # clean verification: disable the 1e-7 degeneracy-splitting regulator so
+    # symmetry deviations are measured at machine precision
+    import sg135_solver
+    sg135_solver._BREAK8 = jnp.zeros((8, 8))
     sol = np.load(sys.argv[1], allow_pickle=True)
     arr = np.atleast_2d(np.asarray(sol, float))
     q = arr[0]
@@ -174,13 +226,24 @@ if __name__ == "__main__":
     else:
         p, c8 = q[:22], q[22:]
     Uval = float(sys.argv[2]) if len(sys.argv) > 2 else None
-    print("== symmetry check (worst |GU H (GU)^+ - H(Wk)|; best Z2 gauge G shown) ==")
+    print("== spinon-sector PSG check (worst |GU H (GU)^+ - H(Wk)|; best Z2 gauge) ==")
     for name, (dev, g) in check_symmetries(p).items():
-        print(f"  {name:14s}: {dev:.2e}  gauge={g:10s} {'OK' if dev < 5e-7 else '<-- VIOLATION'}")
+        print(f"  {name:14s}: {dev:.2e}  gauge={g:10s} {'OK' if dev < 1e-8 else '<-- VIOLATION'}")
     if Uval is not None:
+        print("== chargon-sector PSG check ==")
+        for name, (dev, g) in check_boson_symmetries(p, Uval).items():
+            print(f"  {name:14s}: {dev:.2e}  gauge={g:10s} {'OK' if dev < 1e-8 else '<-- VIOLATION'}")
         fgap, fgapA, wmin = gap_audit(p, Uval)
-        print(f"== gap audit ==  min BdG gap = {fgap:.4f}  gap(A) = {fgapA:.4f}"
-              f"  min boson eig = {wmin:+.4f}  condensate max = {np.abs(c8).max():.3f}")
+        lam = float(p[16])
         ks, ticks, ef, eb = bands(p, Uval)
+        ebpos = np.where(eb > 1e-9, eb, np.inf) if eb is not None else None
+        chargon_gap = float(ebpos.min()) if ebpos is not None else float("nan")
+        print(f"== gap audit ==  grid min BdG gap = {fgap:.4f}; analytic min = |lam| = "
+              f"{abs(lam):.4f} (attained on the lines (kx or ky = pi) & kz = pi, incl. A)")
+        print(f"   chargon EXCITATION gap = {chargon_gap:.4f} (kernel stability margin = {wmin:+.4f})"
+              f"   condensate max = {np.abs(c8).max():.3f}")
+        hev = hessian_audit(p, Uval)
+        print(f"== Hessian audit (OP subspace, 20 dims) ==  min eig = {hev[0]:+.5f}; "
+              f"eigs<0: {(hev < -1e-8).sum()}")
         np.savez("sg135_bands.npz", ks=ks, ticks=ticks, ef=ef, eb=eb, p=p, U=Uval)
         print("saved sg135_bands.npz")

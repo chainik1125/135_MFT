@@ -1,0 +1,17 @@
+row 1/13 done [18s]
+row 2/13 done [24s]
+row 3/13 done [30s]
+row 4/13 done [35s]
+row 5/13 done [40s]
+row 6/13 done [45s]
+row 7/13 done [49s]
+row 8/13 done [53s]
+row 9/13 done [55s]
+row 10/13 done [57s]
+row 11/13 done [60s]
+row 12/13 done [63s]
+row 13/13 done [66s]
+/Users/dmitrymanning-coe/Documents/Research/Barry Bradlyn/135_MFT/code/.venv/lib/python3.10/site-packages/numpy/lib/_nanfunctions_impl.py:1409: RuntimeWarning: All-NaN slice encountered
+  return _nanquantile_unchecked(
+saved channel_surface.npz
+saved channel_surface.png

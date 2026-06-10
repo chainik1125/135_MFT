@@ -1,215 +1,235 @@
-# Slave-boson mean-field theory of the SG135 Hubbard model — 10h sprint summary
+# A slave-boson mean field for the SG135 Hubbard model at filling ν = 4
 
-**TL;DR.** We built and validated (against the published Kane-Mele-Hubbard slave-boson phase diagram) a fully numerical solver for slave-boson self-consistency equations, then solved the SG135 (P4₂/mbc) double-Dirac Hubbard model that the June write-up got stuck on. Within the naive uniform ansatz the mean field picks a symmetric but **nodal** quasi-1D paired spin liquid (channel competition forbids the multi-channel pairing that would gap it). Enlarging the ansatz to the **PSG-twisted (π-flux) sector** — a τ-staggered z-channel whose matrix structure *anticommutes* with the xy channel, so the two gaps add in quadrature — changes the verdict: **the fully-gapped, uncondensed Z₂ fractionalized insulator — the LSM-mandated topological phase of SG135 at ν=4 — is a self-consistent mean field and the lowest-energy SYMMETRIC state for all U ≳ 1.** Its symmetry was verified generator-by-generator (screw, C₂x, both glides, inversion, TRS) with the PSG gauge structure resolved explicitly, and its Bogoliubov spectrum is gapped and non-degenerate over the whole BZ in both spinon and chargon sectors. One broken-symmetry competitor (a z-dimer VBS) sits ~10% lower in raw MFT energy — precisely the kind of dimer state the KMH gate shows mean field over-favors. Every energy entering the phase competition is cross-checked against independent constructions.
+*10-hour sprint, 2026-06-09/10. Code in `code/`, process log in `notes/log.md`,
+group theory in `notes/theory/`, adversarial review in `notes/red_team_review.md`.*
 
 ## Executive summary
 
-*(≤600 words, drafted — final numbers being filled from the production runs)*
+**Problem.** Space group 135 (P4₂/mbc) with time-reversal forbids any *band*
+insulator at 4 electrons per cell (band theory needs multiples of 8), but the
+interacting filling bounds of Watanabe–Po–Vishwanath–Zaletel (WPVZ) permit a
+symmetric gapped state at ν = 4. The prior realization used exactly-solvable
+Hatsugai–Kohmoto interactions (Manning-Coe & Bradlyn 2023). We asked whether a
+*standard Hubbard interaction*, treated by U(1) slave-boson mean-field theory,
+produces such a state — the calculation the June 2022 write-up set up but
+could not solve.
 
-**Problem.** SG135 with spinful TRS forbids any band insulator at filling ν=4 (band minimum: 8 per cell), but the interacting bounds (Watanabe-Po-Vishwanath-Zaletel) allow a gapped symmetric insulator at ν=4 — which, if it exists, must be topologically ordered. Prior work (Manning-Coe & Bradlyn) realized this with exactly-solvable HK interactions. Question: does a *standard* Hubbard interaction, treated in U(1) slave-boson mean-field theory, produce this state? The June 2022 attempt set up the self-consistency equations but could not solve them.
+**Findings.**
 
-- **Gate passed: the solver machinery reproduces the published KMH phase diagram.** Single-particle gap 0.580t vs paper's 0.57t; double occupancy 0.233 vs ~0.23; U_c(SC→SL)=1.58 vs ~1.57; U_c(SL→DM)=1.98 vs ~1.93 (λ_SO=0). [FIGURE: kmh_boundaries]
-  Known residual: our SC region grows more slowly with λ_SO than the paper's figure; our energies are verified against three independent constructions (closed forms, generic eigh/Colpa machinery, operator-level kernels — agreement 1e-10..1e-16), so the discrepancy is robust on our side.
-- **The June blocker is solved: it was (a) needing numerics instead of closed forms, and (b) two bookkeeping traps.** The boson sector requires μ≈U/2 for para-spectrum stability (μ=0 makes every solve fail — this is invisible in the KMH closed forms, which sit at the stable point implicitly), and the decoupling constants are channel-dependent, C=(4,4,8,4), not the uniform 8 of the write-up (validated by a real-space bond-expectation referee). [no figure — see §3]
-- **Group theory: only two physically distinct slave-boson factorization classes exist in SG135, and neither evades the band-connectivity constraint.** Site group 2/m at Wyckoff 4a gives 4 factorizations collapsing under Z₂ gauge twists to Class I/II (chargon C₂z = ±1); both spinon EBRs stay 8-connected at A. Fractionalization itself (chargon gap + spinon pairing), not the boson rep, is what evades LSM. Our ansatz is Class I; its pairing transforms in the identity corep (verified analytically + numerically).
-- **The naive uniform mean field is a symmetric but NODAL fractionalized state.** Its ground state pairs in one channel only (quasi-1D, gapless on the kz=π plane); channel mixing — which would gap it — is refused (concave pairing energetics + commuting channel structures). [FIGURE: sg135_bands_znodal; channel_surface]
-- **HEADLINE: the PSG-twisted (π-flux) ansatz makes the fully-gapped topological state the lowest-energy SYMMETRIC state for all U ≳ 1.** A τ-staggered z-channel anticommutes with the xy channel: gaps add in quadrature; the state is gapped everywhere (BdG gap 0.018 t_xy, chargon gap 0.13), uncondensed, and symmetric with explicitly verified PSG (screw/I/C₂z/T plain; C₂x/glides up to μ_z gauge). By LSM/Watanabe a symmetric gapped insulator at ν=4 must be topologically ordered: this is the mean-field realization of the SG135 Z₂ fractionalized insulator. [FIGURE: sg135_bands_gapped_classII_U1.png]
-- **Phase diagram vs U.** SC (chargon condensate) below U* ≈ 0.8–1; above it the gapped Z₂ insulator beats every symmetric competitor (nodal states by ~7%), while a broken-translation dimer VBS lies ~10% lower in raw mean-field energy — the same situation as the KMH benchmark, where the analogous dimer phase dominates in MFT and is known from QMC to stand in for ordered phases that mean field cannot describe (MFT lacks dimer resonance energy). [FIGURE: sg135_phases]
+- The solver machinery reproduces the published Kane–Mele–Hubbard (KMH)
+  benchmark: gap 0.580t vs 0.57t, double occupancy 0.233 vs ≈0.23, critical
+  couplings 1.58/1.98 vs ≈1.57/1.93. ![KMH](figures/kmh_boundaries.png)
+- The SG135 equations, unsolvable in closed form, fall to numerical
+  diagonalization + automatic differentiation; two bookkeeping traps (μ = U/2
+  boson stability; channel-dependent decoupling constants) explain the June
+  failure. *(§3)*
+- The naive translation-uniform mean field is a symmetric but **nodal**
+  quasi-1D paired state — single-channel pairing, gapless on the kz = π
+  plane. ![nodal](figures/sg135_bands_znodal_U4.png)
+- A **π-flux (PSG-twisted) ansatz** — staggered z-bonds, whose matrix
+  structure anticommutes with the xy channel — gaps everything: pairing gaps
+  add in quadrature. It is the **lowest symmetric state for all U ≳ 1**.
+  ![ladder](figures/sg135_state_ladder.png)
+- This state is **fully gapped, uncondensed, and space-group symmetric**
+  (verified generator-by-generator at machine precision, both matter sectors,
+  with its Z₂ gauge structure resolved); it realizes the topologically
+  ordered branch of the WPVZ window in mean field.
+  ![bands](figures/sg135_bands_gapped_psg_U1.png)
+- Energies vs U: superconductor below U* ∈ (0.6, 1.0); gapped Z₂ insulator
+  above; one broken-symmetry competitor (z-dimer valence-bond solid) sits
+  ~10% lower — the same dimer artifact the KMH benchmark warns about.
+  ![phases](figures/sg135_phases.png)
 
-**Caveats.** Mean-field only (no gauge fluctuations; quasi-1D pairing would be fragile); uniform 4-channel ansatz (no flux/Class II patterns, no broken-symmetry bond order); the KMH SL window itself is known (QMC) to be a mean-field artifact — we use KMH only as a solver gate, not as physics.
-
-## Map of the work
-
-| Section | Content | Code |
-|---|---|---|
-| §1 | KMH gate: validation vs Wen et al. PRB 84, 235149 | `code/kmh/` |
-| §2 | Validation chain: conventions, real-space referee, SO kernels | `code/common/`, `code/kmh/test_so_kernels.py`, `code/sg135/test_realspace.py` |
-| §3 | SG135 solver + the two bookkeeping traps | `code/sg135/` |
-| §4 | Group theory: factorization classes (agent-assisted) | `notes/theory/sg135_factorization.md` |
-| §5 | Results: nodal state, bands, symmetry verification, channel competition | `code/sg135/verify_sg135.py` |
-| §6 | 2D wallpaper-group question | `notes/theory/wallpaper_factorization.md` |
-| log | full research process | `notes/log.md` |
+*(≈290 words)*
 
 ---
 
+## §0 Claims, stated precisely
+
+1. **Solved**: the SG135 slave-boson self-consistency equations (the June
+   blocker) converge to residuals ~10⁻¹⁰ across U ∈ [0.4, 6] (grid nk = 12³,
+   cross-checked at 8³ and 14³; branch energies shift < 0.2%).
+2. **Group theory** (agent-assisted, `notes/theory/sg135_factorization.md`):
+   the electron corep factorizes in exactly four ways at the 4a Wyckoff
+   position; Z₂ gauge twists leave two invariant classes (chargon C₂z = ±1,
+   protected by the 4₂ screw); **no factorization evades the 8ℤ band
+   connectivity** — fractionalization itself, not the boson representation,
+   is what opens the ν = 4 window.
+3. **The realized state**: spinon pairing Δ_xy = 0.27 (uniform, τˣ structure)
+   + Δ_z = 0.54 (τ-staggered, μˣτᶻ structure), all hopping order parameters
+   exactly zero, λ = −0.0138, chargons gapped and uncondensed. The two
+   pairing structures anticommute, so |Δ(k)|² = Δ_xy² g_xy² + Δ_z² g_z² — no
+   interference, both nodal planes gapped.
+4. **Spectrum**: minimum Bogoliubov gap = |λ| = 0.0138 t_xy at U = 1,
+   attained on the lines (k_x or k_y = ±π) ∩ (k_z = ±π) where all form
+   factors vanish (the double-Dirac point A lies on them). Quasiparticle
+   bands are 8-fold degenerate; the BdG ground state itself is unique (no
+   zero modes). Chargon excitation gap 0.343 t_xy. The A-line gap shrinks
+   fast with U (10⁻⁴ by U = 4): gapped at any finite U, parametrically small
+   deep in the Mott regime.
+5. **Symmetry/PSG** (verification with the numerical degeneracy-splitting
+   regulator disabled): spinon sector — 4₂ screw, inversion, C₂z, TRS, and
+   fermionic antisymmetry exact to ≤ 3×10⁻¹⁷; C₂x and both glides exact
+   under a Z₂ gauge compensation (sign per z-layer). Chargon sector — same
+   pattern (pairing blocks exact; kernels at the 10⁻⁸ solver-convergence
+   floor, gauge-independently). Gauge-invariant loops mixing z- and xy-bonds
+   enclose π flux: a genuine π-flux Z₂ ansatz.
+6. **Energetics** (nk = 12, full table in `code/sg135/classII_sweep.npz`):
+   the π-flux state beats every symmetric competitor found at every
+   U ∈ [1.0, 6.0] (margin 7–8% of |E|); at U = 1: −0.2371 vs −0.2202 (nodal
+   z), −0.186 (nodal xy), −0.194 (uniform-mixed saddle); χ-type (spinon
+   Fermi-sea) states have no stationary point. The z-dimer VBS
+   (translation-breaking) lies at −0.262.
+
+**What we do *not* claim.** (i) WPVZ leaves open whether a symmetric
+*short-range-entangled* insulator is possible at ν = 4 in SG135; our state is
+topologically ordered *by construction* (a deconfined Z₂ parton state — at
+mean-field level; confinement by gauge fluctuations is the standard caveat,
+mitigated here by 3+1 dimensions). It occupies the long-range-entangled
+branch of WPVZ's open dichotomy; it does not prove that branch is forced.
+(ii) "Lowest symmetric state" is relative to the ansatz family studied
+(uniform 4-channel + staggered-z channel + condensates); this decoupling has
+no magnetic (Weiss) channel, so Néel-type states were never in the race —
+the same limitation as the KMH reference calculation. (iii) The dimer VBS
+sits below the Z₂ state in raw mean-field energy. Mean field lacks dimer
+resonance energy and the KMH gate itself shows this method's dimer phase is
+an artifact (quantum Monte Carlo finds none), but deciding SG135's true
+ground state needs beyond-mean-field tools.
+
 ## §1 The gate: reproducing the KMH slave-boson phase diagram
 
-We reproduced Wen-Kargarian-Vaezi-Fiete (PRB 84, 235149; arXiv:1107.0007) from
-scratch. Method: transcribe only the compact ground-state-energy expressions
-(appendix), obtain the 14 coupled self-consistency equations as the exact
-gradient of E_g by automatic differentiation (JAX), and solve with multi-seed
-trust-region least squares plus analytic Jacobians (forward-over-reverse
-Hessian of E_g). The condensed (SC) sector lives on a reduced manifold we
-derived from the condensate equations (μ = U/2, λ pinned at the k=0
-Bose-condensation condition); the dimer (DM) phase is the decoupled-dimer limit
-of the same theory.
+Method: transcribe only the compact ground-state-energy expressions of Wen,
+Kargarian, Vaezi & Fiete (PRB 84, 235149); obtain the 14 coupled
+self-consistency equations as the exact gradient of E_g by automatic
+differentiation; solve by multi-seed trust-region least squares with analytic
+(forward-over-reverse) Jacobians. The condensed sector lives on a reduced
+manifold derived from the condensate equations (μ = U/2, λ pinned at the
+Bose-condensation condition); the dimer phase is the decoupled-dimer limit.
 
-Quantitative agreement at λ_SO = 0 (nk = 120 BZ grid):
-
-| quantity | paper | this work |
+| quantity (λ_SO = 0, nk = 120) | paper | this work |
 |---|---|---|
-| SL single-particle gap at U=1.8t | 0.57t | 0.580t |
-| double occupancy, U=1.9t, λ_SO=0.02t | ≈0.23 | 0.2326 |
-| U_c1 (SC→SL) | ≈1.5–1.57t | 1.584t |
-| U_c2 (SL→DM) | ≈1.9–1.93t | 1.982t |
-| triple point λ_SO | ≈0.10t | between 0.10t and 0.15t |
+| spin-liquid single-particle gap at U = 1.8t | 0.57t | 0.580t |
+| double occupancy, U = 1.9t, λ_SO = 0.02t | ≈ 0.23 | 0.2326 |
+| U_c1 (superconductor → spin liquid) | ≈ 1.57t | 1.584t |
+| U_c2 (spin liquid → dimer) | ≈ 1.93t | 1.982t |
 
-![KMH boundaries](figures/kmh_boundaries.png)
-
-**Honest residual:** our SC region grows more slowly with λ_SO than the
-paper's Fig. 1 (e.g. our SC boundary at λ_SO = 0.1 is U = 1.78 vs their 1.93,
-improving with better branch-continuation but not converged to their line).
-We verified our energies three independent ways (§2), so within *our reading
-of their equations* this is what the theory gives. The λ_SO sector does not
-transfer to SG135 (no SOC channels there), so the gate's purpose — validating
-the machinery — is unaffected.
+Honest score: **4 of 5 quantitative checks pass**. The fifth — the slope of
+the SC boundary in λ_SO — comes out shallower than the paper's figure (1.78
+vs 1.93 at λ_SO = 0.1; triple point ≈ 0.13 vs 0.10), improving as the hard
+SC branch is seeded by continuation but not converged to their line. Three
+independent constructions (closed forms; generic eigh/Colpa machinery;
+operator-level kernels with all spin-orbit terms) agree on our energies to
+10⁻¹⁰–10⁻¹⁶, so within our reading of the published equations this is what
+they yield. The unresolved sector (multi-channel spin-orbit bookkeeping) has
+no analogue in the SG135 model we treat — we use the spin-orbit-free
+(t-only) limit of the Wieder et al. model throughout, as the June write-up
+did; the WPVZ bound applies to it regardless.
 
 ## §2 The validation chain
 
-Bugs in mean-field bookkeeping are the central risk (they are what stopped the
-June attempt), so every layer was cross-checked against an independent
-construction:
+Mean-field bookkeeping errors are what stopped the June attempt, so each
+layer has an independent referee:
 
-1. **Conventions test** (`code/common/test_bdg_kmh.py`): the generic numerical
-   machinery (eigh for fermion BdG, Colpa para-diagonalization for bosons)
-   equals the paper's closed-form energies to 2×10⁻¹⁰ over random parameters
-   (the residual is exactly the Cholesky regularizer — even the error term is
-   understood).
-2. **SO-sector test** (`code/kmh/test_so_kernels.py`): operator-level kernels
-   built term-by-term from the second-quantized Hamiltonian reproduce the
-   closed-form fermion spectra to 10⁻¹⁶ and the boson zero-point sums at
-   λ_SO ≠ 0 (the individual boson levels differ by a ±λ_SO χ′g₂ splitting that
-   cancels in the energy — as it must).
-3. **Real-space referee** (`code/sg135/test_realspace.py`): an explicit
-   finite-lattice (6³ cells) construction of the SG135 mean field matches the
-   k-space Bloch kernels to 10⁻¹⁶ and the total energy to 3×10⁻⁸, and measures
-   the per-bond expectations directly — fixing the decoupling constants to
-   **C = (4, 4, 8, 4)** per channel (the June write-up's uniform 2z_i = 8 is
-   incorrect for three of four channels).
+1. `code/common/test_bdg_kmh.py`: the generic numerical machinery (eigh for
+   fermion BdG; Colpa para-diagonalization for bosons) equals the KMH
+   closed-form energies to 2×10⁻¹⁰ at random parameters (the residual is the
+   Cholesky regularizer — even the error term is understood).
+2. `code/kmh/test_so_kernels.py`: kernels rebuilt term-by-term from the
+   second-quantized Hamiltonian reproduce the closed-form fermion spectra to
+   10⁻¹⁶ and the boson zero-point sums at λ_SO ≠ 0 (individual boson levels
+   differ by a ±λ_SO χ′g₂ splitting that cancels in the energy, as it must).
+3. `code/sg135/test_realspace.py`: an explicit 6³-cell real-space
+   construction of the SG135 mean field matches the Bloch kernels to 10⁻¹⁶,
+   the total energy to 3×10⁻⁸, and measures per-bond expectations directly,
+   fixing the decoupling constants C = (4, 4, 8, 4) per channel — the June
+   write-up's uniform 8 is wrong for three of four channels. The staggered
+   fifth channel's C = 4t_z follows from the same bond count (the stagger
+   squares away); its end-to-end referee is the gauge-equivalence test below.
+4. Gauge-equivalence test: the *pure* staggered-z state must be (and is)
+   degenerate with the uniform-z state — energies agree to 10⁻⁵, limited by
+   solver convergence, exercising the staggered channel's full bookkeeping.
+5. Hessian audit: both the nodal and the π-flux solutions are saddle points
+   of the decoupled energy functional with the *same* hyperbolic signature
+   (7–8 negative directions in conjugate (χ_b, χ_f)/(Δ_b, Δ_f) pairs) — the
+   intrinsic Hubbard–Stratonovich geometry, present equally in the published
+   KMH solutions; states are compared, as is standard, by their stationary
+   energies.
 
-## §3 Solving the SG135 self-consistency equations (the June blocker)
+## §3 Solving the June blocker
 
-The blocker dissolves once three things are in place:
+Three ingredients, in order of importance:
 
-- **Numerics instead of closed forms.** The 16×16 kernels have no closed-form
-  spectrum away from the A point (the write-up's §5.1.3 dead end). Numerical
-  eigh/Colpa + autodiff stationarity makes this a non-issue.
+- **Numerics over closed forms.** The 16×16 kernels have no closed-form
+  spectrum away from the A point — the write-up's dead end. Numerical
+  eigh/Colpa plus autodiff stationarity dissolves it.
 - **μ ≈ U/2 for boson stability.** The boson para-spectrum splits as
-  ±(U/2 − μ): the total energy is flat in μ (at half filling, no condensate),
-  but the *spectrum* is not — tethering μ to 0 (the naive choice) makes every
-  k-point unstable and every solve fail. The KMH closed forms silently sit at
-  the stable point; the generic machinery must be told. This single line is,
-  in retrospect, the difference between "unsolvable" and "machine precision".
-- **Channel-dependent decoupling constants** C = (4, 4, 8, 4) (§2.3).
+  ±(U/2 − μ). The energy is flat in μ at half filling, but the *spectrum* is
+  not: tethering μ to 0 makes every k-point unstable and every solve fail.
+  The KMH closed forms sit at the stable point silently; generic machinery
+  must be told. This one line separates "unsolvable" from machine precision.
+- **C = (4, 4, 8, 4)** decoupling constants (§2.3).
 
-With these, uncondensed solutions converge to residuals ~10⁻¹⁰ across
-U ∈ [0.4, 6] and condensed (SC) solutions appear below U* ≈ 0.6–1.0.
+## §4 Group theory in one paragraph
 
-## §4 Group theory: factorization classes (see notes/theory/sg135_factorization.md)
+The model's four sites form Wyckoff orbit 4a (site group 2/m). All four
+site-level factorizations of the electron corep reduce, after Z₂ gauge
+twists, to two invariant classes labeled by the chargon's C₂z eigenvalue —
+protected because C₂z is the *square* of the 4₂ screw (no twist flips a
+square). Both spinon band representations remain 8-fold connected at A, so
+no representation choice evades the band bound: the ν = 4 window opens
+through fractionalization itself. The 2D contrast
+(`notes/theory/wallpaper_factorization.md`): wallpaper groups have enough Z₂
+characters and too few square-constraints — every linear 2D factorization
+gauge-trivializes, making the SG135 protection a genuinely nonsymmorphic-3D
+phenomenon. The realized π-flux state has plain screw/C₂z action (it is not
+the site-level "Class II"); its nontrivial PSG lives in the glide/C₂x sector.
 
-- The model's 4 sites = Wyckoff 4a of P4₂/mbc, site group 2/m. Exactly four
-  site-level factorizations exist; Z₂ gauge twists collapse them to **two
-  physically distinct classes** distinguished by the gauge-invariant chargon
-  eigenvalue χ_b(C₂z) = ±1 — protected because C₂z is the *square* of the 4₂
-  screw, so no Z₂ twist can flip it.
-- **No factorization evades the band-connectivity constraint**: both spinon
-  EBRs are irreducibly 8-fold connected at A; all four boson EBRs are 4-fold
-  connected. The LSM/Watanabe gap at ν = 4 is closed by *fractionalization
-  itself* (boson statistics for charge + pairing for spin), not by the choice
-  of boson representation. Our ansatz realizes Class I; its pairing transforms
-  in the **identity corep** of P4₂/mbc × T (verified analytically and
-  numerically; trivial PSG).
-- 2D contrast (`notes/theory/wallpaper_factorization.md`): in the wallpaper
-  groups every linear factorization gauge-trivializes (enough Z₂ characters,
-  too few square-constraints) — the SG135 Class II protection is a genuinely
-  nonsymmorphic-3D phenomenon.
+## §5 What the mean field chooses, and why
 
-## §5 Results: what the mean field actually chooses
+Within the uniform ansatz each pairing channel vanishes on a high-symmetry
+plane by its form factor, and the channels' matrix structures commute —
+their gaps interfere, and since pairing energy is concave in the gap
+magnitude, concentration beats spreading: the mean field picks one channel
+and stays nodal (the uniform xy+z mixture exists only as a saddle, 0.03 t_xy
+above). The τ-staggered z-channel changes the algebra, not the bonds: μˣτᶻ
+anticommutes with τˣ, the cross terms vanish identically, and mixing becomes
+free of interference cost. The resulting π-flux state gaps both nodal
+planes, leaves the residual lines gapped by λ, and wins by 7–8% over every
+symmetric alternative at every U ≥ 1 we checked.
 
-**The self-consistent ground state of the uncondensed sector is a symmetric,
-quasi-1D, NODAL paired spin liquid** — pairing condenses in the z-channel only
-(Δ_f,z ≈ 0.64), giving spinon BdG bands flat in (kx, ky) and gapless on the
-entire kz = π plane, with the chargon sector gapped (Mott). All P4₂/mbc
-generators, TRS and pairing antisymmetry verified to ≤10⁻⁷ at all HSPs and
-random k.
+Below U* ∈ (0.6, 1.0) the chargon gap closes and a condensed (superconducting)
+solution with uniform mixed-channel pairing takes over (computed at U = 0.6;
+the precise crossing against the π-flux state was not pinned — the combined
+staggered+condensate solve is future work).
 
-![z-nodal bands](figures/sg135_bands_znodal_U4.png)
+## §6 Limitations and next steps
 
-**Why it is nodal: channel competition.** Every individual pairing channel
-vanishes on a high-symmetry plane by its form factor; only channel *mixtures*
-can gap the BZ (with λ ≠ 0 gapping the A point). The energy surface
-E(Δ_xy, Δ_z) shows two single-channel valleys separated by a ridge — the
-mean field refuses to mix channels at the default parameters.
-
-![channel surface](figures/channel_surface.png)
-
-**Within the uniform (Class I) ansatz the gapped state is only a
-mountain-pass.** Seeding the mixed channel converges to a fully symmetric,
-fully gapped stationary point at U = 1 (gap 0.008 t_xy at A; boson gap 0.012;
-no condensate) — but it sits ≈0.03 t_xy above the nodal state, and tuning t_z
-merely swaps which *nodal* state wins (z-only ↔ xy-only); uniform channel
-mixing is always refused. The reason is generic: pairing energy is concave in
-|Δ(k)|, and the commuting matrix structures (τ^x vs μ^x) interfere, so
-concentration beats spreading.
-
-**Enlarging the ansatz to the PSG-twisted (π-flux) sector reverses the
-verdict (user directive: "change the slave boson").** Let the z-channel bond
-mean fields carry a τ-staggered sign: the Bloch structure becomes
-μ^x τ^z cos(k_z/2), which *anticommutes* with the xy channel's τ^x — the two
-pairing gaps now add in quadrature, with zero interference. The resulting
-state, at U = 1 (residual 3×10⁻⁸):
-
-- is the **lowest-energy symmetric state**: E = −0.2374 vs −0.2217 (nodal z)
-  at U = 1, and remains the lowest symmetric state for **all U from ≈1 into
-  the deep Mott regime** (checked to U = 6); below U ≈ 0.8–1 the chargon
-  condenses and the SC takes over. The only state found below it is the
-  broken-translation z-dimer VBS (E = −0.262 at U = 1; decoupled two-site
-  singlets), the direct analogue of the KMH "DM" phase — which the gate
-  itself shows is the channel through which MFT over-favors dimerization
-  (in KMH the same construction wins above U_c2 yet QMC finds no such phase);
-- is **fully gapped and non-degenerate everywhere**: min BdG gap 0.018 t_xy
-  over the BZ (0.014 at A), chargon gap 0.13, no condensate;
-- is **fully symmetric, with its PSG resolved explicitly**: the 4₂ screw,
-  inversion, C₂z and TRS are realized plainly; C₂x and both glides are
-  realized *up to the μ_z gauge transformation* (sign per z-layer) — the
-  flux-twisted realization anticipated by the group-theory analysis. Loops
-  mixing z- and xy-bonds enclose π flux: this is a genuine π-flux Z₂ ansatz.
-- internal consistency check: the *pure* staggered-z state is exactly
-  degenerate with the uniform-z state (gauge equivalence confirmed
-  numerically to 10⁻⁵).
-
-By Watanabe-Po-Vishwanath-Zaletel, a symmetric gapped insulator at ν = 4 in
-SG135 must be topologically ordered: this mean field is precisely the Z₂
-fractionalized insulator — to our knowledge the first self-consistent
-mean-field realization of the SG135 interacting-enabled topological phase
-with a plain Hubbard interaction.
-
-![gapped Class II bands](figures/sg135_bands_gapped_classII_U1.png)
-
-![SG135 phases](figures/sg135_phases.png)
-
-## §6 Limitations and what would come next
-
-- Mean field only: no gauge fluctuations; the KMH gate itself shows MFT
-  overproduces both exotic and dimerized phases (QMC kills the KMH SL window
-  and its DM phase). The VBS-vs-Z₂ competition here (ΔE ≈ 10%) is exactly the
-  kind that dimer-resonance corrections, absent in MFT, are known to tip.
-- Ansatz scope: one PSG-twisted channel was explored (the τ-staggered
-  z-channel); the systematic PSG classification of all flux patterns (and the
-  chargon-C₂z = −1 "Class II proper" sector with its nematic-condensation
-  signature) remains open.
-- The mean field is a BdG free-fermion state; "topologically ordered" applies
-  to the physical projected state it represents (gapped chargon + gapped
-  paired spinon ⇒ deconfined Z₂ gauge structure in 3+1d at mean-field level),
-  with the LSM/Watanabe theorem guaranteeing that *whatever* symmetric gapped
-  state this flows to cannot be short-range entangled.
-- The SG130 control (where LSM forbids the state) was not attempted.
+- Mean field only: no gauge fluctuations; comparisons are energies of
+  Hubbard–Stratonovich saddles. The KMH gate itself shows the method
+  over-produces both exotic and dimerized phases.
+- The dimer VBS question: a beyond-mean-field treatment (or at least a
+  resonance-corrected dimer energy) is needed before claiming the Z₂ state
+  is SG135's Hubbard ground state at intermediate U.
+- The magnetic channel is absent from this decoupling; large-U Néel order is
+  the default expectation in unfrustrated 3D Hubbard models and must be
+  added before any statement about the true deep-Mott regime.
+- One flux pattern was explored; the systematic PSG enumeration (including
+  the chargon-C₂z = −1 class with its forced-nematic condensation signature)
+  is open, as is the SG130 control where the LSM window is absent.
+- The novelty claim (first mean-field realization of the SG135
+  interacting-enabled insulator with a plain Hubbard interaction) rests on
+  the literature agent's sweep (`notes/literature_review.md`); a citation
+  sweep of arXiv:1811.11182 and 2309.15118 is the recommended hardening.
 
 ## Research process
 
-Full timeline in `notes/log.md`; the validation chain (§2) was built *before*
-production runs, and every claimed number has an independent cross-check. Two
-external agent attempts (literature search, group theory) are archived in
-`notes/literature_review.md` and `notes/theory/sg135_factorization.md`; the 2D
-enumeration agent died twice on environment limits and was replaced by the
-manual analysis in `notes/theory/wallpaper_factorization.md`.
+Chronology and dead ends in `notes/log.md`. Verification was built before
+production: conventions referee → real-space referee → gate → physics. Two
+sub-agent reports are archived (`notes/literature_review.md`,
+`notes/theory/sg135_factorization.md`); the 2D enumeration agent died twice
+on environment limits and was replaced by manual analysis
+(`notes/theory/wallpaper_factorization.md`). An adversarial review of this
+document (`notes/red_team_review.md`, 20 issues incl. 3 blockers — wrong
+theorem scope, untested competitors, wrong gap numbers) drove the §0
+"claims/not-claims" split, the VBS computation, the clean re-verification,
+and the Hessian audit.
