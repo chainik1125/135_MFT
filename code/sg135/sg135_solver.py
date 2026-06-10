@@ -131,14 +131,15 @@ def cond_energy(p, c8, U, ts, x=0.0):
     d = c8[4:]
     gs0 = (1.0, 1.0, 0.0, 0.0)  # g_i(k=0)
     E = (U - p[16] - p[17]) * jnp.sum(d**2) + (p[17] - p[16]) * jnp.sum(h**2)
-    # KMH-validated k=0 pattern (cf. write-up Eq. 4.93):
-    #   E -= sum_i t_i chi_f_i g_i(0) [h G_i h - d G_i d]
-    #   E -= sum_i t_i Delta_f_i g_i(0) [d G_i h + h G_i d]
+    # k=0 part of H_b with operators -> condensate amplitudes, in THIS module's
+    # sign labeling (kernels carry +t chi g, +t Delta g; cf. KMH Eq. 4.93 which
+    # uses the opposite labeling - signs here must match boson_blocks):
+    #   E += sum_i t_i g_i(0) [ chi_f_i (h G_i h - d G_i d) + 2 Delta_f_i h G_i d ]
     for i in range(2):  # g1(0) = g2(0) = 0
         G = jnp.real(GAMMAS[i])
         coef = ts[i] * gs0[i]
-        E = E - coef * p[4 + i] * (h @ G @ h - d @ G @ d)
-        E = E - 2.0 * coef * p[12 + i] * (h @ G @ d)
+        E = E + coef * p[4 + i] * (h @ G @ h - d @ G @ d)
+        E = E + 2.0 * coef * p[12 + i] * (h @ G @ d)
     return E
 
 

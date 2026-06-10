@@ -68,9 +68,11 @@ def e_total(p, U, lso, k1, k2, x=0.0, t=1.0):
     Ef = -(1.0 / N) * jnp.sum(_ssqrt(A1 - 2.0 * sA2) + _ssqrt(A1 + 2.0 * sA2))
 
     # --- bosonic (chargeon) energy ---
-    # |g t Df -+ g2 Dfp lso|^2 with complex g, real g2:
-    m_minus = t**2 * Df**2 * g2abs - 2.0 * t * Df * g2f * Dfp * lso * gR + g2f**2 * Dfp**2 * lso**2
-    m_plus = t**2 * Df**2 * g2abs + 2.0 * t * Df * g2f * Dfp * lso * gR + g2f**2 * Dfp**2 * lso**2
+    # (|g| t Df -+ g2 Dfp lso)^2: the paper's d_{3,4} cross term carries |g|
+    # (appendix Eq. d3,4: -+ 8|g| t g2 Df Dfp lso), NOT Re[g].
+    gabs = jnp.sqrt(jnp.clip(g2abs, EPS))
+    m_minus = (gabs * t * Df - g2f * Dfp * lso) ** 2
+    m_plus = (gabs * t * Df + g2f * Dfp * lso) ** 2
     U2l = (U - 2.0 * lam) ** 2
     Eb = -U + (0.5 / N) * jnp.sum(_ssqrt(U2l - 4.0 * m_minus) + _ssqrt(U2l - 4.0 * m_plus))
 
@@ -95,10 +97,10 @@ def domain_penalty(p, U, lso, k1, k2, t=1.0):
     chb, chf, Db, Df, chbp, chfp, Dbp, Dfp, hA, hB, dA, dB, lam, mu = p
     g = 1.0 + jnp.exp(-1j * k2) + jnp.exp(1j * (k1 - k2))
     g2abs = jnp.real(g * jnp.conj(g))
-    gR = jnp.real(g)
+    gabs = jnp.sqrt(jnp.clip(g2abs, EPS))
     g2f = 2.0 * (jnp.cos(k1) + jnp.cos(k2) + jnp.cos(k1 - k2))
-    m_minus = t**2 * Df**2 * g2abs - 2.0 * t * Df * g2f * Dfp * lso * gR + g2f**2 * Dfp**2 * lso**2
-    m_plus = t**2 * Df**2 * g2abs + 2.0 * t * Df * g2f * Dfp * lso * gR + g2f**2 * Dfp**2 * lso**2
+    m_minus = (gabs * t * Df - g2f * Dfp * lso) ** 2
+    m_plus = (gabs * t * Df + g2f * Dfp * lso) ** 2
     U2l = (U - 2.0 * lam) ** 2
     v1 = jnp.max(jnp.clip(4.0 * m_minus - U2l, 0.0))
     v2 = jnp.max(jnp.clip(4.0 * m_plus - U2l, 0.0))

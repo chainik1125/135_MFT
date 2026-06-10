@@ -15,14 +15,27 @@ log = lambda *a: (print(f"[{time.time()-t0:7.1f}s]", *a), sys.stdout.flush())
 
 if __name__ == "__main__":
     res = {"lsos": [], "Uc_low": [], "Uc_high": [], "phases": []}
+    row_cache = {}  # U -> solutions from previous lso row (lso-continuation seeds)
     for lso in (0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30):
-        # coarse scan with continuation to locate transitions
+        # coarse scan with continuation (in U and in lso) to locate transitions
         prev, rows = (), []
+        new_cache = {}
         for U in np.arange(1.0, 3.2001, 0.1):
-            ph, cs = phase_at(U, lso, prev)
+            uk = round(float(U), 2)
+            lso_seeds = row_cache.get(uk, ())
+            # perturb prior-row seeds into the primed directions (both sign branches)
+            pert = []
+            for s in lso_seeds:
+                for eps in (0.08, -0.08):
+                    q = np.array(s, float)
+                    q[6:8] = np.where(np.abs(q[6:8]) < 0.02, eps, q[6:8])
+                    pert.append(q)
+            ph, cs = phase_at(U, lso, tuple(prev) + tuple(pert))
             rows.append((U, ph, cs))
             if cs:
                 prev = tuple(c[2]["p"] for c in cs if "p" in c[2])[:3]
+                new_cache[uk] = [c[2]["p"] for c in cs if "p" in c[2]][:2]
+        row_cache = new_cache
         seq = [(U, ph) for U, ph, _ in rows]
         log(f"lso={lso:.2f} sequence: " + "".join(p[1][0] if p[1] != 'none' else '?' for p in seq))
         bounds = []

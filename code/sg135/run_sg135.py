@@ -92,6 +92,64 @@ def solve_uncondensed(U, seeds):
     return out
 
 
+# ---------------- condensed solve: variables q = concat(p18, c8) ----------------
+def _resid_cond_jax(q, U):
+    p, c8 = q[:18], q[18:]
+    r = jax.grad(e_total, argnums=0)(p, c8, U, kx, ky, kz)
+    rc = jax.grad(e_total, argnums=1)(p, c8, U, kx, ky, kz)
+    wmin = min_boson_eig(p, U, kx, ky, kz)
+    pen = 50.0 * jnp.clip(-wmin, 0.0)
+    return jnp.concatenate([r, rc, jnp.array([pen])])
+
+
+_resid_cond_jit = jax.jit(_resid_cond_jax)
+_resid_cond_jac = jax.jit(jax.jacfwd(_resid_cond_jax, argnums=0))
+
+
+def solve_condensed(U, seeds):
+    out = []
+    for q0 in seeds:
+        try:
+            sol = least_squares(lambda q: np.asarray(_resid_cond_jit(jnp.asarray(q), U)),
+                                np.array(q0),
+                                jac=lambda q: np.asarray(_resid_cond_jac(jnp.asarray(q), U)),
+                                method="trf", xtol=1e-13, ftol=1e-13, gtol=1e-13,
+                                max_nfev=800)
+        except Exception:
+            continue
+        if np.linalg.norm(sol.fun) < 1e-5:
+            p, c8 = sol.x[:18], sol.x[18:]
+            E = float(e_total(jnp.asarray(p), jnp.asarray(c8), U, kx, ky, kz))
+            wmin = float(min_boson_eig(jnp.asarray(p), U, kx, ky, kz))
+            out.append({"p": sol.x, "E": E, "wmin": wmin,
+                        "rnorm": float(np.linalg.norm(sol.fun)),
+                        "cond": float(np.abs(c8).max())})
+    out.sort(key=lambda s: s["E"])
+    return out
+
+
+def cond_seed_bank(U):
+    """Condensate patterns from the Gamma-point pairing structure."""
+    seeds = []
+    base = np.zeros(26)
+    base[8:12] = [0.5, 0.4, 0.1, 0.1]   # Delta_b
+    base[12:16] = [0.35, 0.3, 0.08, 0.08]  # Delta_f
+    base[16] = -0.3
+    base[17] = U / 2.0
+    for hpat, dpat in (
+        ((1, 1, 1, 1), (1, 1, 1, 1)),
+        ((1, -1, 1, -1), (1, -1, 1, -1)),     # tau-odd (KMH-like)
+        ((1, -1, 1, -1), (-1, 1, -1, 1)),
+        ((1, 1, -1, -1), (1, 1, -1, -1)),     # mu-odd
+        ((1, -1, -1, 1), (1, -1, -1, 1)),
+    ):
+        q = base.copy()
+        q[18:22] = 0.4 * np.array(hpat)
+        q[22:26] = 0.4 * np.array(dpat)
+        seeds.append(q)
+    return seeds
+
+
 def seed_bank(U):
     seeds = []
     rng = np.random.default_rng(42)
@@ -117,10 +175,11 @@ def seed_bank(U):
 if __name__ == "__main__":
     band_check()
     atomic_check()
-    if len(sys.argv) > 2 and sys.argv[2] == "solve":
-        log(f"Stage B: U sweep, nk={NK}")
-        prev = []
-        for U in np.arange(4.0, 0.399, -0.2):
+    mode = sys.argv[2] if len(sys.argv) > 2 else ""
+    if mode in ("solve", "both"):
+        log(f"Stage B: uncondensed U sweep, nk={NK}")
+        prev, results = [], {}
+        for U in np.arange(6.0, 0.399, -0.2):
             sols = solve_uncondensed(U, [s["p"] for s in prev[:2]] + seed_bank(U))
             if sols:
                 b = sols[0]
@@ -129,7 +188,23 @@ if __name__ == "__main__":
                     f"Db={np.round(p[8:12],3)} Df={np.round(p[12:16],3)} "
                     f"chib={np.round(p[0:4],3)} chif={np.round(p[4:8],3)} lam={p[16]:+.3f}")
                 prev = sols
+                results[round(float(U), 2)] = b
             else:
                 log(f"U={U:.1f}: NO uncondensed solution converged")
                 prev = []
-        np.save("sg135_last.npy", np.array([s["p"] for s in prev]) if prev else np.zeros(0))
+        np.save("sg135_uncond.npy", np.array([(u, s["E"]) for u, s in results.items()]))
+    if mode in ("cond", "both"):
+        log(f"Stage C: condensed U sweep, nk={NK}")
+        prevc = []
+        for U in np.arange(0.4, 6.001, 0.2):
+            sols = solve_condensed(U, [s["p"] for s in prevc[:2]] + cond_seed_bank(U))
+            if sols:
+                b = sols[0]
+                p = b["p"]
+                log(f"U={U:.1f}: COND E={b['E']:+.5f} |c|max={b['cond']:.3f} wmin={b['wmin']:+.4f} "
+                    f"rn={b['rnorm']:.1e} Db={np.round(p[8:12],3)} Df={np.round(p[12:16],3)} "
+                    f"h={np.round(p[18:22],3)} d={np.round(p[22:26],3)} lam={p[16]:+.3f} mu={p[17]:+.3f}")
+                prevc = sols
+            else:
+                log(f"U={U:.1f}: no condensed solution converged")
+                prevc = []
