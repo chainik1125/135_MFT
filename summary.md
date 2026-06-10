@@ -46,7 +46,9 @@ could not solve.
 
 1. **Solved**: the SG135 slave-boson self-consistency equations (the June
    blocker) converge to residuals ~10⁻¹⁰ across U ∈ [0.4, 6] (grid nk = 12³,
-   cross-checked at 8³ and 14³; branch energies shift < 0.2%).
+   cross-checked at 8³, 14³, 16³; branch energies shift < 0.2% and the
+   gapped-vs-nodal margin at U = 1 *grows* under refinement:
+   0.0157 → 0.0169 → 0.0173 for nk = 8, 12, 16).
 2. **Group theory** (agent-assisted, `notes/theory/sg135_factorization.md`):
    the electron corep factorizes in exactly four ways at the 4a Wyckoff
    position; Z₂ gauge twists leave two invariant classes (chargon C₂z = ±1,

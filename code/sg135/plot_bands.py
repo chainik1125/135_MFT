@@ -11,6 +11,7 @@ ks, ticks, ef, eb, U = d["ks"], d["ticks"], d["ef"], d["eb"], float(d["U"])
 labels = ["$\\Gamma$", "X", "M", "$\\Gamma$", "Z", "R", "A", "Z", "X", "R", "M", "A"]
 xt = list(ticks[:-1]) + [len(ks) - 1]
 
+title = sys.argv[2] if len(sys.argv) > 2 else f"SG135 slave-boson mean field, U={U}: quasiparticle bands"
 fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True,
                          gridspec_kw={"height_ratios": [1.2, 1]})
 x = np.arange(len(ks))
@@ -18,7 +19,12 @@ for b in range(ef.shape[1]):
     axes[0].plot(x, ef[:, b], lw=0.8, color="#27408b")
 axes[0].axhline(0, color="k", lw=0.5, ls=":")
 axes[0].set_ylabel("spinon BdG energy $/t_{xy}$")
-axes[0].set_title(f"SG135 slave-boson mean field, U={U}: quasiparticle bands")
+axes[0].set_title(title)
+gmin = float(np.abs(ef).min())
+axes[0].annotate(f"min gap = {gmin:.4f} $t_{{xy}}$ (R–A line)" if gmin > 1e-3
+                 else f"GAPLESS: min gap = {gmin:.1e} (nodal plane $k_z=\\pi$ = Z–R–A)",
+                 xy=(0.55, 0.52), xycoords="axes fraction", fontsize=10,
+                 color="#b22222", fontweight="bold")
 
 if eb is not None and eb.size:
     for b in range(eb.shape[1]):
