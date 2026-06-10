@@ -85,12 +85,14 @@ could not solve.
    Fermi-sea) stationary point was found — hopping-seeded solves collapse to
    χ = 0. The z-dimer VBS (translation-breaking) lies at −0.262.
 
-**What we do *not* claim.** (i) WPVZ leaves open whether a symmetric
-*short-range-entangled* insulator is possible at ν = 4 in SG135; our state is
-topologically ordered *by construction* (a deconfined Z₂ parton state — at
-mean-field level; confinement by gauge fluctuations is the standard caveat,
-mitigated here by 3+1 dimensions). It occupies the long-range-entangled
-branch of WPVZ's open dichotomy; it does not prove that branch is forced.
+**What we do *not* claim.** (i) WPVZ's verified bounds (their Table S1):
+SG135 interacting bound ν ∈ 4ℤ — a symmetric gapped state at ν = 4 is
+permitted, with the SRE-vs-topological dichotomy left open (SG135 is one of
+their ten exceptional groups). Our state is topologically ordered *by
+construction* (a deconfined Z₂ parton state — at mean-field level;
+confinement by gauge fluctuations is the standard caveat, mitigated here by
+3+1 dimensions). It occupies the long-range-entangled branch; it does not
+prove that branch is forced.
 (ii) "Lowest symmetric state" is relative to the ansatz family studied
 (uniform 4-channel + staggered-z channel + condensates); this decoupling has
 no magnetic (Weiss) channel, so Néel-type states were never in the race —
@@ -188,6 +190,20 @@ gauge-trivializes, making the SG135 protection a genuinely nonsymmorphic-3D
 phenomenon. The realized π-flux state has plain screw/C₂z action (it is not
 the site-level "Class II"); its nontrivial PSG lives in the glide/C₂x sector.
 
+**The SG130 control** (`notes/theory/sg130_control.md`; bounds verified from
+the WPVZ PDFs: SG130 → ν ∈ 8ℤ, SG135 → ν ∈ 4ℤ): the mirrored construction
+*provably fails* in SG130 — its sites sit at Wyckoff 4c (site group C₄, which
+acts trivially on the sublattices), so no anticommuting symmetric channel
+pair exists at hopping range; the two strict channels commute, vanish jointly
+on glide-protected zone-edge lines, and the filling pins the spinon BdG
+sector to exact nodal lines for every parameter choice. Only parametrically
+weaker channels (O(λ²/U) extended-s) could gap SG130 — and its factorization
+admits a single gauge class (no Class II analogue, the screw² protection
+being absent). The 135-vs-130 contrast is thus sharp at leading order,
+exactly as the project predicted, with the precise caveat that WPVZ's SG130
+bound constrains short-range-entangled states only (topological order evades
+it there too, as in the Hatsugai–Kohmoto study).
+
 ## §5 What the mean field chooses, and why
 
 Within the uniform ansatz each pairing channel vanishes on a high-symmetry
@@ -225,7 +241,10 @@ mis-pin of this crossing that compared the SC against the wrong branch.)
   added before any statement about the true deep-Mott regime.
 - One flux pattern was explored; the systematic PSG enumeration (including
   the chargon-C₂z = −1 class with its forced-nematic condensation signature)
-  is open, as is the SG130 control where the LSM window is absent.
+  is open. The SG130 control was completed at the group-theory and
+  fixed-ansatz level (§4); its remaining open piece is whether SG130's
+  *self-consistency* selects the fragile extended-s gapped region or stays
+  nodal.
 - Novelty: the literature agent's sweep (`notes/literature_review.md`) plus a
   closing web sweep found no prior parton mean-field realization of the SG135
   (or any WPVZ-window) interaction-enabled insulator; the nearest relatives
