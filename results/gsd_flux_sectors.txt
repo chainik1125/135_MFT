@@ -18,3 +18,13 @@ Conclusion: the 8 flux sectors of the PSG-twisted state become degenerate in
 the thermodynamic limit (all sectors individually gapped), consistent with
 GSD = 8 on T^3 - the 3+1d Z2 topological order count. Parton-level proxy;
 the definitive object is the projected-wavefunction GSD.
+
+Local indistinguishability check (U=0.85, sectors (000) vs (111)):
+max difference over all 22 local observables (bond/site expectations):
+ L= 6: 9.34e-02   L=14: 4.58e-03   L=22: 3.65e-04
+ L=10: 1.84e-02   L=18: 1.26e-03
+-> collapses with the same exponential-type signature: the 8 sectors are
+locally indistinguishable in the thermodynamic limit. The degeneracy is
+TOPOLOGICAL (flux-sector), not symmetry-breaking: no local order parameter
+distinguishes the sectors, the count 2^3 is tied to the torus cycles, and
+within each sector the BdG ground state is unique (no zero modes).
